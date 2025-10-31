@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Café Aroma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50 min-h-screen flex items-center justify-center py-12">
+    <!-- Background Pattern -->
+    <div class="absolute inset-0 bg-coffee-brown opacity-5"
+        style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23000000\' fill-opacity=\'0.1\'%3E%3Ccircle cx=\'30\' cy=\'30\' r=\'4\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');">
+    </div>
+
+    <div class="relative max-w-md w-full mx-4">
+        <!-- Logo Header -->
+        <div class="text-center mb-8">
+            <a href="index.html" class="inline-flex items-center">
+                <i class="fas fa-coffee text-coffee-brown text-3xl mr-3"></i>
+                <span class="text-3xl font-bold text-coffee-brown brand-name">Café Aroma</span>
+            </a>
+            <p class="mt-2 text-gray-600">Join our coffee community today!</p>
+        </div>
+
+        <!-- Registration Form -->
+        <div class="bg-white rounded-lg shadow-lg p-8">
+            <h2 class="text-2xl font-bold text-center mb-6 text-gray-900">Create Account</h2>
+
+            <form id="register-form" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label for="firstName" class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <input type="text" id="firstName" name="firstName" required class="w-full form-input"
+                            placeholder="Yong">
+                    </div>
+                    <div>
+                        <label for="lastName" class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" required class="w-full form-input"
+                            placeholder="Lyhor">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                        <input type="email" id="email" name="email" required class="w-full pl-10 form-input"
+                            placeholder="yonglyhor@example.com">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-phone text-gray-400"></i>
+                        </div>
+                        <input type="tel" id="phone" name="phone" class="w-full pl-10 form-input"
+                            placeholder="(+855) 97 59 333 86">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Account Type</label>
+                    <select id="role" name="role" required class="w-full form-input">
+                        <option value="">Select Account Type</option>
+                        <option value="customer">Customer Account</option>
+                        <option value="administrator">Admin Account</option>
+                    </select>
+                    <p class="text-xs text-gray-500 mt-1">
+                        Choose "Customer Account" for regular shopping or "Admin Account" for management access
+                    </p>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" name="password" required
+                            class="w-full pl-10 pr-10 form-input" placeholder="Enter password">
+                        <button type="button" onclick="togglePassword('password')"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i class="fas fa-eye text-gray-400 hover:text-gray-600" id="password-toggle"></i>
+                        </button>
+                    </div>
+                    <div class="mt-1">
+                        <div class="text-xs text-gray-500">
+                            Password must be at least 8 characters long
+                        </div>
+                        <div id="password-strength" class="mt-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                            <div class="h-full bg-red-500 transition-all duration-300" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-1">Confirm
+                        Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required
+                            class="w-full pl-10 pr-10 form-input" placeholder="Confirm password">
+                        <button type="button" onclick="togglePassword('confirmPassword')"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <i class="fas fa-eye text-gray-400 hover:text-gray-600" id="confirmPassword-toggle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="birthDate" class="block text-sm font-medium text-gray-700 mb-1">Date of Birth
+                        (Optional)</label>
+                    <input type="date" id="birthDate" name="birthDate" class="w-full form-input">
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-start">
+                    <input type="checkbox" id="terms" name="terms" required
+                        class="h-4 w-4 text-coffee-brown focus:ring-coffee-brown border-gray-300 rounded mt-1">
+                    <div class="ml-2 text-sm">
+                        <label for="terms" class="text-gray-700">
+                            I agree to the
+                            <a href="#" class="text-coffee-brown hover:text-coffee-dark">Terms of Service</a>
+                            and
+                            <a href="#" class="text-coffee-brown hover:text-coffee-dark">Privacy Policy</a>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Newsletter Signup -->
+                <div class="flex items-center">
+                    <input type="checkbox" id="newsletter" name="newsletter"
+                        class="h-4 w-4 text-coffee-brown focus:ring-coffee-brown border-gray-300 rounded">
+                    <label for="newsletter" class="ml-2 text-sm text-gray-700">
+                        Subscribe to our newsletter for special offers and updates
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full btn-coffee">
+                    <i class="fas fa-user-plus mr-2"></i>
+                    Create Account
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="relative my-6">
+                <div class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-gray-300"></div>
+                </div>
+                <div class="relative flex justify-center text-sm">
+                    <span class="px-2 bg-white text-gray-500">Or sign up with</span>
+                </div>
+            </div>
+
+            <!-- Social Registration -->
+            <div class="grid grid-cols-2 gap-3">
+                <button
+                    class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <i class="fab fa-google text-red-500"></i>
+                    <span class="ml-2">Google</span>
+                </button>
+                <button
+                    class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                    <i class="fab fa-facebook text-blue-600"></i>
+                    <span class="ml-2">Facebook</span>
+                </button>
+            </div>
+
+            <!-- Sign In Link -->
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Already have an account?
+                    <a href="login.html" class="font-medium text-coffee-brown hover:text-coffee-dark">
+                        Sign in here
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="text-center mt-6">
+            <a href="index.html" class="text-coffee-brown hover:text-coffee-dark">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Home
+            </a>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-md w-full p-6 text-center">
+            <div class="mb-4">
+                <i class="fas fa-check-circle text-green-500 text-6xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-2">Welcome to Café Aroma!</h3>
+            <p class="text-gray-600 mb-4">
+                Your account has been created successfully. You can now start exploring our menu and placing orders.
+            </p>
+            <p class="text-sm text-gray-500 mb-6">
+                Redirecting to home page in <span id="countdown">3</span> seconds...
+            </p>
+            <button onclick="closeSuccessModal()" class="btn-coffee">
+                Continue Now
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="assets/js/common.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if user is already logged in
+            if (auth.isLoggedIn()) {
+                window.location.href = 'index.html';
+            }
+
+            // Password strength checker
+            document.getElementById('password').addEventListener('input', checkPasswordStrength);
+        });
+
+        // Registration form submission
+        document.getElementById('register-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const registerData = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                email: formData.get('email'),
+                phone: formData.get('phone'),
+                role: formData.get('role'),
+                password: formData.get('password'),
+                confirmPassword: formData.get('confirmPassword'),
+                birthDate: formData.get('birthDate'),
+                terms: formData.get('terms') === 'on',
+                newsletter: formData.get('newsletter') === 'on'
+            };
+
+            // Validate form
+            const errors = validateForm(registerData, {
+                firstName: { required: true },
+                lastName: { required: true },
+                email: { required: true, email: true },
+                role: { required: true },
+                password: { required: true, minLength: 8 },
+                confirmPassword: { required: true, match: 'password' }
+            });
+
+            if (errors) {
+                const firstError = Object.keys(errors)[0];
+                showToast(errors[firstError], 'error');
+                return;
+            }
+
+            if (!registerData.terms) {
+                showToast('Please accept the Terms of Service', 'error');
+                return;
+            }
+
+            try {
+                showLoading();
+
+                // Check if email already exists (demo)
+                const existingUsers = storage.get('users') || [];
+                if (existingUsers.find(u => u.email === registerData.email)) {
+                    hideLoading();
+                    showToast('Email already exists. Please use a different email.', 'error');
+                    return;
+                }
+
+                // Try to register with backend first
+                try {
+                    const response = await api.register(registerData);
+
+                    if (response && response.includes('successfully')) {
+                        // Backend registration successful
+                        hideLoading();
+
+                        // Create user object for frontend
+                        const newUser = {
+                            id: Date.now(),
+                            name: `${registerData.firstName} ${registerData.lastName}`,
+                            firstName: registerData.firstName,
+                            lastName: registerData.lastName,
+                            email: registerData.email,
+                            phone: registerData.phone,
+                            role: registerData.role,
+                            birthDate: registerData.birthDate,
+                            newsletter: registerData.newsletter,
+                            createdAt: new Date().toISOString()
+                        };
+
+                        // Auto-login the user
+                        auth.login(newUser);
+
+                        // Show success modal
+                        showSuccessModal();
+
+                        // Backup redirect in case modal fails (after 5 seconds)
+                        setTimeout(() => {
+                            if (window.location.pathname.includes('register.html')) {
+                                window.location.href = 'index.html';
+                            }
+                        }, 5000);
+
+                    } else {
+                        throw new Error(response || 'Registration failed');
+                    }
+                } catch (backendError) {
+                    console.log('Backend registration failed, falling back to localStorage:', backendError);
+
+                    // Fallback to localStorage registration
+                    hideLoading();
+
+                    // Create user object
+                    const newUser = {
+                        id: Date.now(),
+                        name: `${registerData.firstName} ${registerData.lastName}`,
+                        firstName: registerData.firstName,
+                        lastName: registerData.lastName,
+                        email: registerData.email,
+                        phone: registerData.phone,
+                        role: registerData.role,
+                        birthDate: registerData.birthDate,
+                        newsletter: registerData.newsletter,
+                        createdAt: new Date().toISOString()
+                    };
+
+                    // Store user in local storage
+                    existingUsers.push(newUser);
+                    storage.set('users', existingUsers);
+
+                    // Auto-login the user
+                    auth.login(newUser);
+
+                    // Show success modal
+                    showSuccessModal();
+
+                    // Backup redirect in case modal fails (after 5 seconds)
+                    setTimeout(() => {
+                        if (window.location.pathname.includes('register.html')) {
+                            window.location.href = 'index.html';
+                        }
+                    }, 5000);
+                }
+
+            } catch (error) {
+                hideLoading();
+                console.error('Registration error:', error);
+                showToast('Registration failed. Please try again.', 'error');
+            }
+        });
+
+        // Toggle password visibility
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + '-toggle');
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Check password strength
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthBar = document.getElementById('password-strength').firstElementChild;
+
+            let strength = 0;
+            let color = 'bg-red-500';
+
+            if (password.length >= 8) strength += 20;
+            if (password.match(/[a-z]/)) strength += 20;
+            if (password.match(/[A-Z]/)) strength += 20;
+            if (password.match(/[0-9]/)) strength += 20;
+            if (password.match(/[^a-zA-Z0-9]/)) strength += 20;
+
+            if (strength >= 80) color = 'bg-green-500';
+            else if (strength >= 60) color = 'bg-yellow-500';
+            else if (strength >= 40) color = 'bg-orange-500';
+
+            strengthBar.className = `h-full transition-all duration-300 ${color}`;
+            strengthBar.style.width = `${strength}%`;
+        }
+
+        // Success modal functions
+        function showSuccessModal() {
+            document.getElementById('success-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+
+            // Show success toast
+            showToast('Account created successfully! Welcome to Café Aroma!', 'success');
+
+            // Countdown and auto redirect
+            let countdown = 3;
+            const countdownElement = document.getElementById('countdown');
+
+            const timer = setInterval(() => {
+                countdown--;
+                if (countdownElement) {
+                    countdownElement.textContent = countdown;
+                }
+
+                if (countdown <= 0) {
+                    clearInterval(timer);
+                    if (!document.getElementById('success-modal').classList.contains('hidden')) {
+                        closeSuccessModal();
+                    }
+                }
+            }, 1000);
+
+            // Store timer ID to clear it if modal is closed manually
+            window.registrationTimer = timer;
+        }
+
+        function closeSuccessModal() {
+            // Clear countdown timer if it exists
+            if (window.registrationTimer) {
+                clearInterval(window.registrationTimer);
+                window.registrationTimer = null;
+            }
+
+            document.getElementById('success-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+
+            // Get current user and redirect based on role
+            const currentUser = auth.getUser();
+            if (currentUser && (currentUser.role === 'administrator' || currentUser.role === 'admin')) {
+                window.location.href = 'admin/dashboard.html';
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Form validation improvements
+        document.getElementById('email').addEventListener('blur', function () {
+            const email = this.value;
+            if (email) {
+                // Check if email exists (demo)
+                const existingUsers = storage.get('users') || [];
+                if (existingUsers.find(u => u.email === email)) {
+                    this.setCustomValidity('This email is already registered');
+                    this.classList.add('border-red-500');
+                } else {
+                    this.setCustomValidity('');
+                    this.classList.remove('border-red-500');
+                }
+            }
+        });
+
+        document.getElementById('confirmPassword').addEventListener('input', function () {
+            const password = document.getElementById('password').value;
+            if (this.value && this.value !== password) {
+                this.setCustomValidity('Passwords do not match');
+                this.classList.add('border-red-500');
+            } else {
+                this.setCustomValidity('');
+                this.classList.remove('border-red-500');
+            }
+        });
+    </script>
+</body>
+
+</html>

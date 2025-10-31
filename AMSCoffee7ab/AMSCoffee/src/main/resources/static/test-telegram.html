@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Telegram Order Notification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Test Telegram Order Notification</h1>
+    <p>Use this form to test if Telegram notifications are sent when an order is placed.</p>
+
+    <form id="orderForm">
+        <div class="form-group">
+            <label for="customerName">Customer Name:</label>
+            <input type="text" id="customerName" name="customerName" value="John Doe" required>
+        </div>
+
+        <div class="form-group">
+            <label for="customerEmail">Customer Email:</label>
+            <input type="email" id="customerEmail" name="customerEmail" value="john.doe@example.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="customerPhone">Customer Phone:</label>
+            <input type="tel" id="customerPhone" name="customerPhone" value="+855123456789">
+        </div>
+
+        <div class="form-group">
+            <label for="orderType">Order Type:</label>
+            <select id="orderType" name="orderType" required>
+                <option value="pickup">Pickup</option>
+                <option value="delivery">Delivery</option>
+                <option value="dine_in">Dine In</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="totalAmount">Total Amount ($):</label>
+            <input type="number" id="totalAmount" name="totalAmount" value="25.50" step="0.01" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="subtotal">Subtotal ($):</label>
+            <input type="number" id="subtotal" name="subtotal" value="23.50" step="0.01" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="paymentMethod">Payment Method:</label>
+            <select id="paymentMethod" name="paymentMethod">
+                <option value="cash">Cash</option>
+                <option value="card">Card</option>
+                <option value="mobile">Mobile Payment</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="specialInstructions">Special Instructions:</label>
+            <textarea id="specialInstructions" name="specialInstructions" rows="3"
+                placeholder="Extra hot, no sugar, etc.">Extra hot americano, double shot</textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="deliveryAddress">Delivery Address (if delivery):</label>
+            <textarea id="deliveryAddress" name="deliveryAddress" rows="2"
+                placeholder="Street address for delivery">123 Main St, Phnom Penh, Cambodia</textarea>
+        </div>
+
+        <button type="submit">🛒 Place Test Order & Send Telegram Notification</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('orderForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>⏳ Processing order and sending Telegram notification...</p>';
+
+            const formData = new FormData(this);
+            const orderData = {
+                customerName: formData.get('customerName'),
+                customerEmail: formData.get('customerEmail'),
+                customerPhone: formData.get('customerPhone'),
+                orderType: formData.get('orderType'),
+                totalAmount: parseFloat(formData.get('totalAmount')),
+                subtotal: parseFloat(formData.get('subtotal')),
+                taxAmount: 0.0,
+                deliveryFee: 0.0,
+                paymentMethod: formData.get('paymentMethod'),
+                paymentStatus: 'pending',
+                status: 'pending',
+                specialInstructions: formData.get('specialInstructions'),
+                deliveryAddress: formData.get('deliveryAddress')
+            };
+
+            try {
+                const response = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                if (response.ok) {
+                    const order = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h3>✅ Order Created Successfully!</h3>
+                            <p><strong>Order Number:</strong> ${order.orderNumber}</p>
+                            <p><strong>Order ID:</strong> ${order.id}</p>
+                            <p><strong>Total:</strong> $${order.totalAmount}</p>
+                            <p>📱 <strong>Telegram notification should be sent to your bot now!</strong></p>
+                            <p>Check your Telegram chat to see the order notification.</p>
+                        </div>
+                    `;
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h3>❌ Order Failed</h3>
+                            <p>Error: ${errorText}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h3>❌ Request Failed</h3>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+
+</html>

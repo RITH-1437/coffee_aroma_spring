@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Café Aroma - Brewed Fresh, Served Warm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="fixed w-full top-0 z-50 navbar-sticky">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <i class="fas fa-coffee text-coffee-brown text-2xl mr-3"></i>
+                    <span class="text-2xl font-bold text-coffee-brown brand-name">Café Aroma</span>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html"
+                            class="text-coffee-brown hover:text-coffee-dark px-3 py-2 rounded-md text-sm font-medium border-b-2 border-coffee-brown">Home</a>
+                        <a href="about.html"
+                            class="text-gray-700 hover:text-coffee-brown px-3 py-2 rounded-md text-sm font-medium">About</a>
+                        <a href="products.html"
+                            class="text-gray-700 hover:text-coffee-brown px-3 py-2 rounded-md text-sm font-medium">Products</a>
+                        <a href="contact.html"
+                            class="text-gray-700 hover:text-coffee-brown px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                        <a href="order.html"
+                            class="text-coffee-brown hover:text-coffee-dark px-3 py-2 rounded-md text-sm font-medium border-b-2 border-coffee-brown relative">
+                            Order
+                            <span id="cart-count"
+                                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs text-center place-content-center"
+                                style="display: none;">0</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Auth Buttons -->
+                <div class="hidden md:block">
+                    <div id="auth-buttons" class="flex items-center space-x-2">
+                        <a href="login.html"
+                            class="text-gray-700 hover:text-coffee-brown px-3 py-2 rounded-md text-sm font-medium">Login</a>
+                        <a href="register.html" class="btn-coffee text-sm">Register</a>
+                    </div>
+
+                    <div id="user-menu" class="flex items-center space-x-4" style="display: none;">
+                        <span class="text-gray-700">Welcome, <span class="user-name font-semibold"></span></span>
+                        <!-- Admin dashboard link will be inserted here dynamically -->
+                        <button onclick="auth.logoutWithConfirmation()"
+                            class="inline-flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200 transform hover:scale-105">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                            <span class="font-medium">Logout</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-gray-700 hover:text-coffee-brown">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu md:hidden bg-white shadow-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html" class="text-coffee-brown block px-3 py-2 text-base font-medium">Home</a>
+                <a href="about.html"
+                    class="text-gray-700 hover:text-coffee-brown block px-3 py-2 text-base font-medium">About</a>
+                <a href="products.html"
+                    class="text-gray-700 hover:text-coffee-brown block px-3 py-2 text-base font-medium">Products</a>
+                <a href="contact.html"
+                    class="text-gray-700 hover:text-coffee-brown block px-3 py-2 text-base font-medium">Contact</a>
+                <a href="order.html"
+                    class="text-gray-700 hover:text-coffee-brown block px-3 py-2 text-base font-medium">Order</a>
+                <a href="login.html"
+                    class="text-gray-700 hover:text-coffee-brown block px-3 py-2 text-base font-medium">Login</a>
+                <a href="register.html" class="text-coffee-brown block px-3 py-2 text-base font-medium">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Slideshow Section -->
+    <section class="relative h-screen overflow-hidden">
+        <div class="slideshow-container relative w-full h-full">
+            <!-- Slide 1 -->
+            <div class="slide active absolute inset-0 w-full h-full">
+                <div class="relative w-full h-full">
+                    <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=1920&h=1080&fit=crop"
+                        alt="Coffee Shop Interior" class="w-full h-full object-cover">
+                    <div class="hero-overlay absolute inset-0 flex items-center justify-center">
+                        <div class="text-center text-white px-4">
+                            <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-on-scroll">Brewed Fresh</h1>
+                            <p class="text-xl md:text-2xl mb-8 animate-on-scroll">Experience the perfect cup of coffee
+                                every time</p>
+                            <a href="products.html"
+                                class="btn-coffee text-lg px-8 py-4 hover-scale animate-on-scroll">Order Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <div class="slide absolute inset-0 w-full h-full opacity-0">
+                <div class="relative w-full h-full">
+                    <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1920&h=1080&fit=crop"
+                        alt="Coffee Beans" class="w-full h-full object-cover">
+                    <div class="hero-overlay absolute inset-0 flex items-center justify-center">
+                        <div class="text-center text-white px-4">
+                            <h1 class="text-5xl md:text-7xl font-bold mb-6">Served Warm</h1>
+                            <p class="text-xl md:text-2xl mb-8">From our heart to your cup</p>
+                            <a href="about.html" class="btn-coffee text-lg px-8 py-4 hover-scale">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 3 -->
+            <div class="slide absolute inset-0 w-full h-full opacity-0">
+                <div class="relative w-full h-full">
+                    <img src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?w=1920&h=1080&fit=crop"
+                        alt="Coffee Cup" class="w-full h-full object-cover">
+                    <div class="hero-overlay absolute inset-0 flex items-center justify-center">
+                        <div class="text-center text-white px-4">
+                            <h1 class="text-5xl md:text-7xl font-bold mb-6">Premium Quality</h1>
+                            <p class="text-xl md:text-2xl mb-8">Sourced from the finest coffee beans worldwide</p>
+                            <a href="contact.html" class="btn-coffee text-lg px-8 py-4 hover-scale">Visit Us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slideshow Controls -->
+        <button
+            class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-opacity"
+            onclick="previousSlide()">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button
+            class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white p-3 rounded-full hover:bg-opacity-70 transition-opacity"
+            onclick="nextSlide()">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <!-- Slide Indicators -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex space-x-2">
+            <button class="indicator active w-3 h-3 bg-white rounded-full opacity-70"
+                onclick="currentSlide(1)"></button>
+            <button class="indicator w-3 h-3 bg-white rounded-full opacity-50" onclick="currentSlide(2)"></button>
+            <button class="indicator w-3 h-3 bg-white rounded-full opacity-50" onclick="currentSlide(3)"></button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4 animate-on-scroll">Why Choose Café Aroma?</h2>
+                <p class="text-xl text-gray-600 animate-on-scroll">Experience excellence in every cup</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center card bg-white p-8 rounded-lg animate-on-scroll">
+                    <div class="bg-coffee-light rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-seedling text-coffee-brown text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Premium Beans</h3>
+                    <p class="text-gray-600">Sourced directly from the finest coffee farms around the world</p>
+                </div>
+
+                <div class="text-center card bg-white p-8 rounded-lg animate-on-scroll">
+                    <div class="bg-coffee-light rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-heart text-coffee-brown text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Made with Love</h3>
+                    <p class="text-gray-600">Each cup is crafted with passion and attention to detail</p>
+                </div>
+
+                <div class="text-center card bg-white p-8 rounded-lg animate-on-scroll">
+                    <div class="bg-coffee-light rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-clock text-coffee-brown text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-4">Always Fresh</h3>
+                    <p class="text-gray-600">Brewed fresh daily to ensure the perfect taste and aroma</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-coffee-brown">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold text-white mb-6 animate-on-scroll">Ready to taste perfection?</h2>
+            <p class="text-xl text-coffee-light mb-8 animate-on-scroll">Order online or visit our café today</p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center animate-on-scroll">
+                <a href="products.html"
+                    class="bg-white text-coffee-brown px-8 py-3 rounded-full font-semibold hover-scale">Browse Menu</a>
+                <a href="contact.html"
+                    class="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-coffee-brown transition-colors">Find
+                    Location</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coffee Experience Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <!-- Text Content - Left Side -->
+                <div class="space-y-6 animate-on-scroll">
+                    <h2 class="text-4xl lg:text-5xl font-bold text-coffee-brown leading-tight">
+                        See the World Through Coffee
+                    </h2>
+                    <p class="text-xl text-gray-600 leading-relaxed">
+                        Step into our modern café where industrial design meets artisanal coffee craft. Every cup tells
+                        a story, every sip connects cultures, and every moment creates memories.
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-3 h-3 bg-coffee-brown rounded-full"></div>
+                            <span class="text-lg text-gray-700">Premium 100% Arabica beans from around the world</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-3 h-3 bg-coffee-brown rounded-full"></div>
+                            <span class="text-lg text-gray-700">Expertly crafted by skilled baristas</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-3 h-3 bg-coffee-brown rounded-full"></div>
+                            <span class="text-lg text-gray-700">Modern industrial atmosphere with warm
+                                hospitality</span>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="w-3 h-3 bg-coffee-brown rounded-full"></div>
+                            <span class="text-lg text-gray-700">A global coffee experience in your neighborhood</span>
+                        </div>
+                    </div>
+                    <div class="pt-6">
+                        <a href="about.html"
+                            class="inline-flex items-center bg-coffee-brown text-white px-8 py-4 rounded-full font-semibold text-lg hover-scale">
+                            <i class="fas fa-coffee mr-3"></i>
+                            Discover Our Story
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Image - Right Side -->
+                <div class="lg:order-last animate-on-scroll">
+                    <div class="relative overflow-hidden rounded-2xl shadow-2xl">
+                        <img src="https://png.pngtree.com/background/20230522/original/pngtree-an-industrial-styled-coffee-shop-picture-image_2690167.jpg"
+                            alt="Modern coffee shop interior with industrial design, exposed brick walls, and professional coffee equipment"
+                            class="w-full h-96 lg:h-[500px] object-cover hover:scale-105 transition-transform duration-700">
+
+                        <!-- Overlay Text Badge -->
+                        <div
+                            class="absolute top-6 left-6 bg-white bg-opacity-90 backdrop-blur-sm rounded-full px-6 py-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-2xl font-bold text-coffee-brown">%</span>
+                                <span class="text-lg font-semibold text-gray-800">ARABICA</span>
+                            </div>
+                        </div>
+
+                        <!-- Bottom Overlay -->
+                        <div
+                            class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/50 to-transparent p-6">
+                            <p class="text-white text-lg font-medium tracking-wider">
+                                SEE THE WORLD THROUGH COFFEE
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-coffee-dark text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Logo and Description -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-coffee text-coffee-brown text-2xl mr-3"></i>
+                        <span class="text-2xl font-bold brand-name">Café Aroma</span>
+                    </div>
+                    <p class="text-coffee-light mb-6">
+                        We're passionate about delivering the perfect coffee experience.
+                        From bean to cup, every step is crafted with care and precision.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://web.facebook.com/yong.lihor"
+                            class="text-coffee-light hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="https://www.instagram.com/yonglyhor379/"
+                            class="text-coffee-light hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-coffee-light hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-coffee-light hover:text-white transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="https://t.me/YongLyhor3791"
+                            class="text-coffee-light hover:text-white transition-colors">
+                            <i class="fab fa-telegram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-coffee-light hover:text-white transition-colors">Home</a>
+                        </li>
+                        <li><a href="about.html" class="text-coffee-light hover:text-white transition-colors">About
+                                Us</a></li>
+                        <li><a href="products.html"
+                                class="text-coffee-light hover:text-white transition-colors">Menu</a></li>
+                        <li><a href="contact.html"
+                                class="text-coffee-light hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Info</h3>
+                    <ul class="space-y-2 text-coffee-light">
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            379 Coffee Street, PP City
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-2"></i>
+                            (+855) 97 59 333 86
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-2"></i>
+                            Lyhor@cafearoma.com
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-clock mr-2"></i>
+                            Mon-Sun: 6AM - 10PM
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-coffee-brown mt-8 pt-8 text-center">
+                <p class="text-coffee-light">
+                    &copy; 2025 Café Aroma. All rights reserved. Made with <i class="fas fa-heart text-red-500"></i> for
+                    coffee lovers.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="assets/js/common.js"></script>
+    <script>
+        // Slideshow functionality
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide');
+        const indicators = document.querySelectorAll('.indicator');
+
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                slide.style.opacity = i === index ? '1' : '0';
+                slide.classList.toggle('active', i === index);
+            });
+
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === index);
+                indicator.style.opacity = i === index ? '0.9' : '0.5';
+            });
+        }
+
+        function nextSlide() {
+            currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+            showSlide(currentSlideIndex);
+        }
+
+        function previousSlide() {
+            currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+            showSlide(currentSlideIndex);
+        }
+
+        function currentSlide(index) {
+            currentSlideIndex = index - 1;
+            showSlide(currentSlideIndex);
+        }
+
+        // Auto-play slideshow
+        setInterval(nextSlide, 5000);
+
+        // Initialize slideshow
+        showSlide(0);
+
+        // Add smooth transitions
+        slides.forEach(slide => {
+            slide.style.transition = 'opacity 1s ease-in-out';
+        });
+    </script>
+</body>
+
+</html>

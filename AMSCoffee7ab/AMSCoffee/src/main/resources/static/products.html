@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - Café Aroma</title>
+    <!-- Preload critical resources -->
+    <link rel="preload" href="assets/css/style.css" as="style">
+    <link rel="preload" href="assets/js/common.js" as="script">
+    <link rel="dns-prefetch" href="//images.unsplash.com">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="fixed w-full top-0 z-50 navbar-sticky">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <i class="fas fa-coffee text-coffee-brown text-2xl mr-3"></i>
+                    <span class="text-2xl font-bold text-coffee-brown brand-name">Café Aroma</span>
+                </div>
+
+                <!-- Navigation Links -->
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="index.html"
+                            class="text-gray-700 hover:text-coffee-brown px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <a href="about.html"
+                            class="text-gray-700 hover:text-coffee-brown px-3 py-2 rounded-md text-sm font-medium">About</a>
+                        <a href="products.html"
+                            class="text-coffee-brown hover:text-coffee-dark px-3 py-2 rounded-md text-sm font-medium border-b-2 border-coffee-brown">Products</a>
+                        <a href="contact.html"
+                            class="text-gray-700 hover:text-coffee-brown px-3 py-2 rounded-md text-sm font-medium">Contact</a>
+                        <a href="order.html"
+                            class="text-coffee-brown hover:text-coffee-dark px-3 py-2 rounded-md text-sm font-medium border-b-2 border-coffee-brown relative">
+                            Order
+                            <span id="cart-count"
+                                class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs text-center place-content-center"
+                                style="display: none;">0</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Auth Buttons -->
+                <div class="hidden md:block">
+                    <div id="auth-buttons" class="flex items-center space-x-2">
+                        <a href="login.html"
+                            class="text-gray-700 hover:text-coffee-brown px-3 py-2 rounded-md text-sm font-medium">Login</a>
+                        <a href="register.html" class="btn-coffee text-sm">Register</a>
+                    </div>
+
+                    <div id="user-menu" class="flex items-center space-x-4" style="display: none;">
+                        <span class="text-gray-700">Welcome, <span class="user-name font-semibold"></span></span>
+                        <!-- Admin dashboard link will be inserted here dynamically -->
+                        <button onclick="auth.logoutWithConfirmation()"
+                            class="inline-flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-all duration-200 transform hover:scale-105">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                            <span class="font-medium">Logout</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button onclick="toggleMobileMenu()" class="text-gray-700 hover:text-coffee-brown">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="mobile-menu md:hidden bg-white shadow-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html"
+                    class="text-gray-700 hover:text-coffee-brown block px-3 py-2 text-base font-medium">Home</a>
+                <a href="about.html"
+                    class="text-gray-700 hover:text-coffee-brown block px-3 py-2 text-base font-medium">About</a>
+                <a href="products.html" class="text-coffee-brown block px-3 py-2 text-base font-medium">Products</a>
+                <a href="contact.html"
+                    class="text-gray-700 hover:text-coffee-brown block px-3 py-2 text-base font-medium">Contact</a>
+                <a href="order.html"
+                    class="text-gray-700 hover:text-coffee-brown block px-3 py-2 text-base font-medium">Order</a>
+                <a href="login.html"
+                    class="text-gray-700 hover:text-coffee-brown block px-3 py-2 text-base font-medium">Login</a>
+                <a href="register.html" class="text-coffee-brown block px-3 py-2 text-base font-medium">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative bg-coffee-brown text-white py-32 mt-16">
+        <div class="absolute inset-0 bg-black opacity-20"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6 animate-on-scroll">Our Menu</h1>
+            <p class="text-xl md:text-2xl text-coffee-light animate-on-scroll">Discover your perfect cup and more</p>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="py-8 bg-white sticky top-16 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="filterProducts('all')"
+                    class="filter-btn active bg-coffee-brown text-white px-6 py-2 rounded-full font-medium">
+                    All Items
+                </button>
+                <button onclick="filterProducts('Coffee')"
+                    class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-coffee-brown hover:text-white">
+                    Coffee
+                </button>
+                <button onclick="filterProducts('Pastry')"
+                    class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-coffee-brown hover:text-white">
+                    Pastry
+                </button>
+                <button onclick="filterProducts('Cold Drinks')"
+                    class="filter-btn bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-coffee-brown hover:text-white">
+                    Cold Drinks
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Grid -->
+    <section class="py-16 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="products-grid" class="product-grid">
+                <!-- Products will be loaded here -->
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loading-products" class="flex justify-center items-center py-16">
+                <div class="flex items-center space-x-3">
+                    <div class="w-4 h-4 bg-coffee-brown rounded-full animate-bounce"></div>
+                    <div class="w-4 h-4 bg-coffee-brown rounded-full animate-bounce" style="animation-delay: 0.1s">
+                    </div>
+                    <div class="w-4 h-4 bg-coffee-brown rounded-full animate-bounce" style="animation-delay: 0.2s">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg max-w-2xl w-full max-h-90vh overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <h2 id="modal-title" class="text-2xl font-bold text-gray-900"></h2>
+                    <button onclick="closeProductModal()" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <img id="modal-image" src="" alt="" class="w-full h-64 object-cover rounded-lg">
+                    </div>
+                    <div>
+                        <p id="modal-category" class="text-coffee-brown font-medium mb-2"></p>
+                        <p id="modal-price" class="text-3xl font-bold text-gray-900 mb-4"></p>
+                        <p id="modal-description" class="text-gray-600 mb-6">
+                            Enjoy this carefully crafted beverage made with premium ingredients and expert brewing
+                            techniques.
+                        </p>
+                        <div class="flex items-center space-x-4 mb-6">
+                            <label class="text-gray-700 font-medium">Quantity:</label>
+                            <div class="flex items-center border rounded">
+                                <button onclick="decreaseQuantity()" class="px-3 py-1 hover:bg-gray-100">-</button>
+                                <input type="number" id="quantity-input" value="1" min="1"
+                                    class="w-16 text-center py-1 border-0 focus:outline-none">
+                                <button onclick="increaseQuantity()" class="px-3 py-1 hover:bg-gray-100">+</button>
+                            </div>
+                        </div>
+                        <button onclick="addToCartFromModal()" class="w-full btn-coffee">
+                            <i class="fas fa-shopping-cart mr-2"></i>
+                            Add to Cart
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-coffee-dark text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Logo and Description -->
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center mb-4">
+                        <i class="fas fa-coffee text-coffee-light text-2xl mr-3"></i>
+                        <span class="text-2xl font-bold brand-name">Café Aroma</span>
+                    </div>
+                    <p class="text-coffee-light mb-6">
+                        We're passionate about delivering the perfect coffee experience.
+                        From bean to cup, every step is crafted with care and precision.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://web.facebook.com/yong.lihor"
+                            class="text-coffee-light hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="https://www.instagram.com/yonglyhor379/"
+                            class="text-coffee-light hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-coffee-light hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-coffee-light hover:text-white transition-colors">
+                            <i class="fab fa-linkedin text-xl"></i>
+                        </a>
+                        <a href="https://t.me/YongLyhor3791"
+                            class="text-coffee-light hover:text-white transition-colors">
+                            <i class="fab fa-telegram text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-coffee-light hover:text-white transition-colors">Home</a>
+                        </li>
+                        <li><a href="about.html" class="text-coffee-light hover:text-white transition-colors">About
+                                Us</a></li>
+                        <li><a href="products.html"
+                                class="text-coffee-light hover:text-white transition-colors">Menu</a></li>
+                        <li><a href="contact.html"
+                                class="text-coffee-light hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Info</h3>
+                    <ul class="space-y-2 text-coffee-light">
+                        <li class="flex items-center">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            379 Coffee Street, PP City
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-phone mr-2"></i>
+                            (+855) 97 59 333 86
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-envelope mr-2"></i>
+                            Lyhor@cafearoma.com
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-clock mr-2"></i>
+                            Mon-Sun: 6AM - 10PM
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-coffee-brown mt-8 pt-8 text-center">
+                <p class="text-coffee-light">
+                    &copy; 2025 Café Aroma. All rights reserved. Made with <i class="fas fa-heart text-red-500"></i> for
+                    coffee lovers.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="assets/js/common.js"></script>
+    <script>
+        let allProducts = [];
+        let currentProduct = null;
+
+        // Load products on page load
+        document.addEventListener('DOMContentLoaded', function () {
+            loadProducts();
+        });
+
+        // Get elegant product descriptions
+        function getProductDescription(productName) {
+            const descriptions = {
+                'Classic Espresso': 'Rich and bold espresso shot',
+                'Cappuccino': 'Smooth espresso with steamed milk',
+                'Caramel Latte': 'Sweet caramel meets creamy latte',
+                'Americano': 'Classic espresso with hot water',
+                'Mocha': 'Perfect blend of coffee and chocolate',
+                'Macchiato': 'Espresso marked with foamed milk',
+                'Flat White': 'Microfoam meets double espresso',
+                'Iced Coffee': 'Refreshing cold brew perfection',
+                'Frappé': 'Blended ice coffee delight',
+                'Croissant': 'Buttery, flaky French pastry',
+                'Muffin': 'Fresh baked morning treat',
+                'Danish': 'Sweet pastry with fruit filling'
+            };
+
+            return descriptions[productName] || 'Crafted with premium ingredients';
+        }
+
+        // Load products from backend API
+        async function loadProducts() {
+            try {
+                const API_BASE_URL = 'http://localhost:8080';
+
+                // Try to load from backend API first
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/products`);
+
+                    if (response.ok) {
+                        const apiProducts = await response.json();
+                        if (apiProducts && apiProducts.length > 0) {
+                            allProducts = apiProducts.map(product => ({
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                                category: getCategoryNameById(product.categoryId) || 'Other',
+                                image: product.imageUrl || 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=300&fit=crop&auto=format',
+                                description: product.description || getProductDescription(product.name),
+                                rating: 0, // Will be loaded separately
+                                ratingCount: 0,
+                                available: product.isAvailable !== false,
+                                featured: product.isFeatured === true
+                            }));
+                            console.log('✅ Loaded products from backend:', allProducts.length);
+
+                            // Load ratings for all products
+                            await loadProductRatings();
+
+                            return;
+                        }
+                    }
+                } catch (apiError) {
+                    console.log('Backend API not available, using sample data');
+                }
+
+                // Fallback to sample data if API fails
+                allProducts = getSampleProducts();
+                displayProducts(allProducts);
+
+            } catch (error) {
+                console.error('Error loading products:', error);
+                allProducts = getSampleProducts();
+                displayProducts(allProducts);
+            } finally {
+                document.getElementById('loading-products').style.display = 'none';
+            }
+        }
+
+        // Helper function to get category name by ID
+        function getCategoryNameById(categoryId) {
+            const categories = {
+                1: 'Coffee',
+                2: 'Pastry',
+                3: 'Cold Drinks',
+                4: 'Beverages'
+            };
+            return categories[categoryId] || 'Other';
+        }
+
+        // Display products in grid
+        function displayProducts(products) {
+            const grid = document.getElementById('products-grid');
+
+            if (products.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <i class="fas fa-coffee text-6xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl text-gray-500">No products found</h3>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = products.map(product => `
+                <div class="elegant-product-card animate-on-scroll" data-category="${product.category}">
+                    <div class="product-image-container">
+                        <img src="${product.image}" 
+                             alt="${product.name}" 
+                             class="product-image" 
+                             loading="lazy"
+                             decoding="async"
+                             onload="this.style.opacity=1"
+                             style="opacity:0;transition:opacity 0.3s ease">
+                        <div class="price-badge">$${product.price.toFixed(2)}</div>
+                        <div class="product-category-badge">${product.category}</div>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title-elegant">${product.name}</h3>
+                        <p class="product-description">${getProductDescription(product.name)}</p>
+                        <div class="product-rating">
+                            <div class="rating-container">
+                                <div class="star-rating" data-product-id="${product.id}">
+                                    ${generateStarDisplay(product.rating || 0)}
+                                </div>
+                                <span class="rating-text">(${(product.rating || 0).toFixed(1)})</span>
+                                <span class="rating-count">${product.ratingCount || 0} reviews</span>
+                            </div>
+                            <span class="rating-action" onclick="openRatingModal(${product.id})">Rate this</span>
+                        </div>
+                        <div class="product-actions">
+                            <button onclick="addToCart(${product.id})" class="add-to-cart-elegant">
+                                <i class="fas fa-shopping-cart"></i>
+                                Add to Cart
+                            </button>
+                            <button onclick="showProductDetails(${product.id})" class="view-details-elegant">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter products by category
+        function filterProducts(category) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-coffee-brown', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+
+            event.target.classList.add('active', 'bg-coffee-brown', 'text-white');
+            event.target.classList.remove('bg-gray-200', 'text-gray-700');
+
+            // Filter and display products
+            const filteredProducts = category === 'all'
+                ? allProducts
+                : allProducts.filter(product => product.category === category);
+
+            displayProducts(filteredProducts);
+        }
+
+        // Add product to cart
+        function addToCart(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (product) {
+                cart.add(product);
+            }
+        }
+
+        // Show product details modal
+        function showProductDetails(productId) {
+            currentProduct = allProducts.find(p => p.id === productId);
+            if (currentProduct) {
+                document.getElementById('modal-title').textContent = currentProduct.name;
+                document.getElementById('modal-image').src = currentProduct.image;
+                document.getElementById('modal-image').alt = currentProduct.name;
+                document.getElementById('modal-category').textContent = currentProduct.category;
+                document.getElementById('modal-price').textContent = `$${currentProduct.price.toFixed(2)}`;
+                document.getElementById('quantity-input').value = 1;
+
+                document.getElementById('product-modal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        // Close product modal
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            currentProduct = null;
+        }
+
+        // Increase quantity in modal
+        function increaseQuantity() {
+            const input = document.getElementById('quantity-input');
+            input.value = parseInt(input.value) + 1;
+        }
+
+        // Decrease quantity in modal
+        function decreaseQuantity() {
+            const input = document.getElementById('quantity-input');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+
+        // Add to cart from modal
+        function addToCartFromModal() {
+            if (currentProduct) {
+                const quantity = parseInt(document.getElementById('quantity-input').value);
+                for (let i = 0; i < quantity; i++) {
+                    cart.add(currentProduct);
+                }
+                closeProductModal();
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('product-modal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeProductModal();
+            }
+        });
+
+        // Handle escape key to close modal
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeProductModal();
+                closeRatingModal();
+            }
+        });
+
+        // Rating System Functions
+        let currentRatingProduct = null;
+        let selectedRating = 0;
+
+        function generateStarDisplay(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            let stars = '';
+
+            for (let i = 1; i <= 5; i++) {
+                if (i <= fullStars) {
+                    stars += '<i class="fas fa-star star filled"></i>';
+                } else if (i === fullStars + 1 && hasHalfStar) {
+                    stars += '<i class="fas fa-star-half-alt star filled"></i>';
+                } else {
+                    stars += '<i class="far fa-star star"></i>';
+                }
+            }
+            return stars;
+        }
+
+        function generateInteractiveStars(rating = 0) {
+            let stars = '';
+            for (let i = 1; i <= 5; i++) {
+                const filled = i <= rating ? 'filled' : '';
+                stars += `<button type="button" class="text-3xl text-gray-300 hover:text-yellow-500 star interactive ${filled}" data-rating="${i}" onclick="selectRating(${i})">
+                    <i class="fas fa-star"></i>
+                </button>`;
+            }
+            return stars;
+        }
+
+        function selectRating(rating) {
+            selectedRating = rating;
+            const stars = document.querySelectorAll('#rating-stars .star');
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('filled');
+                    star.classList.remove('text-gray-300');
+                    star.classList.add('text-yellow-500');
+                } else {
+                    star.classList.remove('filled', 'text-yellow-500');
+                    star.classList.add('text-gray-300');
+                }
+            });
+        }
+
+        function openRatingModal(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            currentRatingProduct = product;
+            selectedRating = 0;
+
+            document.getElementById('rating-product-name').textContent = product.name;
+            document.getElementById('rating-stars').innerHTML = generateInteractiveStars();
+            document.getElementById('rating-comment').value = '';
+            document.getElementById('rating-modal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+
+            // Add animation
+            setTimeout(() => {
+                const modal = document.querySelector('#rating-modal .animate-in');
+                if (modal) {
+                    modal.classList.remove('scale-95');
+                    modal.classList.add('scale-100');
+                }
+            }, 10);
+        }
+
+        function closeRatingModal() {
+            const modal = document.getElementById('rating-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('opacity-0');
+                const modalContent = modal.querySelector('.animate-in');
+                if (modalContent) {
+                    modalContent.classList.remove('scale-100');
+                    modalContent.classList.add('scale-95');
+                }
+                document.body.style.overflow = 'auto';
+                currentRatingProduct = null;
+                selectedRating = 0;
+            }, 300);
+        }
+
+        async function submitRating() {
+            if (!currentRatingProduct || selectedRating === 0) {
+                showModernAlert('Please select a rating!', 'warning', 'Rating Required');
+                return;
+            }
+
+            const comment = document.getElementById('rating-comment').value.trim();
+
+            try {
+                // Get current user if logged in
+                const user = auth.getUser();
+                const userId = user ? user.id : null;
+
+                // Prepare review data for backend
+                const reviewData = {
+                    userId: userId,
+                    productId: currentRatingProduct.id,
+                    rating: selectedRating,
+                    comment: comment || null,
+                    title: `Review for ${currentRatingProduct.name}`,
+                    isApproved: false // Reviews need admin approval
+                };
+
+                // Try to submit to backend API first
+                const API_BASE_URL = 'http://localhost:8080';
+                try {
+                    const response = await fetch(`${API_BASE_URL}/api/reviews`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(reviewData)
+                    });
+
+                    if (response.ok) {
+                        const savedReview = await response.json();
+                        console.log('✅ Review submitted to backend:', savedReview);
+
+                        // Show success message
+                        showModernAlert('Thank you for your review! It will be published after approval.', 'success', 'Review Submitted');
+
+                        // Close modal
+                        closeRatingModal();
+
+                        // Refresh product ratings
+                        await loadProductRatings();
+
+                        return;
+                    }
+                } catch (apiError) {
+                    console.log('Backend API not available, using localStorage fallback');
+                }
+
+                // Fallback to localStorage if backend is not available
+                let ratings = JSON.parse(localStorage.getItem('productRatings') || '{}');
+
+                if (!ratings[currentRatingProduct.id]) {
+                    ratings[currentRatingProduct.id] = {
+                        ratings: [],
+                        average: 0,
+                        count: 0
+                    };
+                }
+
+                // Add new rating
+                ratings[currentRatingProduct.id].ratings.push({
+                    rating: selectedRating,
+                    comment: comment,
+                    date: new Date().toISOString(),
+                    user: user ? user.name : 'Anonymous User',
+                    userId: userId
+                });
+
+                // Recalculate average
+                const productRatings = ratings[currentRatingProduct.id].ratings;
+                const average = productRatings.reduce((sum, r) => sum + r.rating, 0) / productRatings.length;
+                ratings[currentRatingProduct.id].average = average;
+                ratings[currentRatingProduct.id].count = productRatings.length;
+
+                // Update product in products array
+                const productIndex = allProducts.findIndex(p => p.id === currentRatingProduct.id);
+                if (productIndex !== -1) {
+                    allProducts[productIndex].rating = average;
+                    allProducts[productIndex].ratingCount = productRatings.length;
+                }
+
+                // Save to localStorage
+                localStorage.setItem('productRatings', JSON.stringify(ratings));
+                localStorage.setItem('products', JSON.stringify(allProducts));
+
+                // Update display
+                updateProductRatingDisplay(currentRatingProduct.id);
+
+                // Close modal
+                closeRatingModal();
+
+                // Show success message
+                showModernAlert('Thank you for your rating!', 'success', 'Rating Submitted');
+
+            } catch (error) {
+                console.error('Error submitting rating:', error);
+                showModernAlert('Failed to submit rating. Please try again.', 'error', 'Submission Failed');
+            }
+        }
+
+        function updateProductRatingDisplay(productId) {
+            const ratingContainer = document.querySelector(`[data-product-id="${productId}"]`);
+            if (ratingContainer) {
+                const product = window.products.find(p => p.id === productId);
+                if (product) {
+                    ratingContainer.innerHTML = generateStarDisplay(product.rating || 0);
+                    const ratingText = ratingContainer.parentElement.querySelector('.rating-text');
+                    const ratingCount = ratingContainer.parentElement.querySelector('.rating-count');
+
+                    if (ratingText) ratingText.textContent = `(${(product.rating || 0).toFixed(1)})`;
+                    if (ratingCount) ratingCount.textContent = `${product.ratingCount || 0} reviews`;
+                }
+            }
+        }
+
+        // Load ratings from backend API
+        async function loadProductRatings() {
+            try {
+                const API_BASE_URL = 'http://localhost:8080';
+
+                // Try to load from backend API first
+                for (let product of allProducts) {
+                    try {
+                        const response = await fetch(`${API_BASE_URL}/api/reviews/product/${product.id}/stats`);
+                        if (response.ok) {
+                            const stats = await response.json();
+                            product.rating = stats.averageRating || 0;
+                            product.ratingCount = stats.approvedReviews || 0;
+                        }
+                    } catch (statsError) {
+                        console.log(`Could not load stats for product ${product.id}`);
+                    }
+                }
+
+                // Update the display
+                displayProducts(allProducts);
+                console.log('✅ Product ratings loaded from backend');
+
+            } catch (error) {
+                console.log('Backend API not available, using localStorage fallback');
+
+                // Fallback to localStorage
+                const ratings = JSON.parse(localStorage.getItem('productRatings') || '{}');
+
+                allProducts.forEach(product => {
+                    if (ratings[product.id]) {
+                        product.rating = ratings[product.id].average;
+                        product.ratingCount = ratings[product.id].count;
+                    }
+                });
+
+                displayProducts(allProducts);
+            }
+        }
+
+        // Initialize ratings when page loads
+        document.addEventListener('DOMContentLoaded', function () {
+            // Ratings will be loaded after products are loaded
+        });
+
+        // Close rating modal when clicking outside
+        document.addEventListener('click', function (e) {
+            const modal = document.getElementById('rating-modal');
+            if (e.target === modal) {
+                closeRatingModal();
+            }
+        });
+    </script>
+
+    <!-- Rating Modal -->
+    <div id="rating-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full transform transition-all duration-300 scale-95 animate-in">
+            <div class="p-6">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-star text-yellow-600 text-2xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 text-center mb-2">Rate This Product</h3>
+                <p id="rating-product-name" class="text-gray-600 text-center mb-6"></p>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3 text-center">Your Rating</label>
+                    <div id="rating-stars" class="flex justify-center space-x-1"></div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="rating-comment" class="block text-sm font-medium text-gray-700 mb-2">Your Review (Optional)</label>
+                    <textarea id="rating-comment" rows="3"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown focus:border-transparent resize-none"
+                        placeholder="Share your thoughts about this product..."></textarea>
+                </div>
+
+                <div class="flex space-x-3">
+                    <button onclick="closeRatingModal()"
+                        class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-200">
+                        Cancel
+                    </button>
+                    <button onclick="submitRating()"
+                        class="flex-1 bg-coffee-brown text-white py-2 px-4 rounded-lg hover:bg-coffee-dark transition-colors duration-200">
+                        Submit Rating
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

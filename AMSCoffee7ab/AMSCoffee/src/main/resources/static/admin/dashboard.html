@@ -1,0 +1,2168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Café Aroma</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Configure API base URL here or via server-side templating -->
+    <meta name="api-base" content="http://localhost:8080">
+    <script>
+        // Read API base from meta tag; set to empty string if not provided
+        (function () {
+            const meta = document.querySelector('meta[name="api-base"]');
+            window.API_BASE_URL = meta && meta.content ? meta.content.replace(/\/$/, '') : '';
+            console.log('API Base URL configured:', window.API_BASE_URL);
+        })();
+    </script>
+</head>
+
+<body class="bg-gray-100">
+    <!-- Admin Header -->
+    <header class="bg-white shadow-lg fixed w-full top-0 z-50">
+        <div class="max-w-full px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <i class="fas fa-coffee text-coffee-brown text-2xl mr-3"></i>
+                    <div>
+                        <span class="text-xl font-bold text-coffee-brown">Café Aroma</span>
+                        <span class="text-sm text-gray-500 ml-2">Admin Dashboard</span>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Toggle -->
+                <button class="md:hidden text-gray-600 hover:text-coffee-brown" onclick="toggleMobileSidebar()">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+
+                <!-- Admin Menu -->
+                <div class="flex items-center space-x-4">
+                    <a href="../index.html" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold rounded-lg shadow-lg hover:shadow-blue-500/50 transform hover:scale-105 transition-all duration-300 animate-pulse hover:animate-none focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+                        <i class="fas fa-rocket mr-2 text-sm relative z-10"></i>
+                        <span class="hidden sm:inline relative z-10">View Site</span>
+                        <span class="sm:hidden relative z-10">Site</span>
+                        <div class="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-400 to-purple-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                    </a>
+                    <div class="relative">
+                        <button onclick="toggleProfileMenu()"
+                            class="inline-flex items-center px-3 py-2 bg-gradient-to-r from-green-500 via-teal-500 to-cyan-500 text-white font-semibold rounded-lg shadow-lg hover:shadow-green-500/50 transform hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-green-300 focus:ring-offset-2 relative overflow-hidden group">
+                            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+                            <i class="fas fa-user-circle text-sm mr-2 relative z-10"></i>
+                            <span class="admin-name hidden sm:inline relative z-10">Admin User</span>
+                            <i class="fas fa-chevron-down text-xs ml-1 relative z-10"></i>
+                            <div class="absolute inset-0 rounded-lg bg-gradient-to-r from-green-400 to-teal-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                        </button>
+
+                        <!-- Profile Dropdown -->
+                        <div id="profile-menu"
+                            class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-50 border border-gray-200">
+                            <div class="py-2">
+                                <div class="px-4 py-3 border-b border-gray-200">
+                                    <p class="text-sm font-medium text-gray-900">Admin User</p>
+                                    <p class="text-xs text-gray-500">Administrator</p>
+                                </div>
+                                <div class="py-1">
+                                    <button onclick="openProfileSettings()" class="w-full text-left block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                                <i class="fas fa-user text-blue-600 text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium block">Profile Settings</span>
+                                                <span class="text-xs text-gray-500">Update your account info</span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                    <button onclick="openSystemSettings()" class="w-full text-left block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                                <i class="fas fa-cog text-purple-600 text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium block">System Settings</span>
+                                                <span class="text-xs text-gray-500">Configure application</span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                                <hr class="my-1 border-gray-200">
+                                <div class="py-1">
+                                    <button onclick="adminLogout()"
+                                        class="w-full text-left block px-4 py-3 text-sm text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 hover:text-red-700 transition-all duration-300 rounded-lg mx-2 my-1 transform hover:scale-105 hover:shadow-md">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                                                <i class="fas fa-sign-out-alt text-red-600 text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <span class="font-semibold block">Logout</span>
+                                                <span class="text-xs text-red-500">End session</span>
+                                            </div>
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex h-screen pt-16">
+        <!-- Sidebar -->
+        <nav class="admin-sidebar w-64 shadow-lg fixed left-0 top-16 h-full z-40 overflow-y-auto">
+            <div class="p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#dashboard" onclick="showSection('dashboard', this)" class="sidebar-link active">
+                            <i class="fas fa-tachometer-alt mr-3"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#users" onclick="showSection('users', this)" class="sidebar-link">
+                            <i class="fas fa-users mr-3"></i>
+                            Manage Users
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#products" onclick="showSection('products', this)" class="sidebar-link">
+                            <i class="fas fa-coffee mr-3"></i>
+                            Manage Products
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#orders" onclick="showSection('orders', this)" class="sidebar-link">
+                            <i class="fas fa-shopping-cart mr-3"></i>
+                            Manage Orders
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#testimonials" onclick="showSection('testimonials', this)" class="sidebar-link">
+                            <i class="fas fa-star mr-3"></i>
+                            Testimonials
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#categories" onclick="showSection('categories', this)" class="sidebar-link">
+                            <i class="fas fa-tags mr-3"></i>
+                            Categories
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#ratings" onclick="showSection('ratings', this)" class="sidebar-link">
+                            <i class="fas fa-star-half-alt mr-3"></i>
+                            Product Ratings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#contacts" onclick="showSection('contacts', this)" class="sidebar-link">
+                            <i class="fas fa-envelope mr-3"></i>
+                            Contact Messages
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto p-8 ml-64">
+            <!-- Dashboard Section -->
+            <section id="dashboard-section" class="admin-section">
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
+                    <p class="text-gray-600">Welcome back! Here's what's happening at your café.</p>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Total Orders Card -->
+                    <div class="modern-stat-card bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-blue-100 text-sm font-medium mb-1">Total Orders</p>
+                                <p class="text-3xl font-bold text-white" id="total-orders">127</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="fas fa-arrow-up text-green-300 text-xs mr-1"></i>
+                                    <span class="text-blue-200 text-xs">+12% from last month</span>
+                                </div>
+                            </div>
+                            <div class="bg-white bg-opacity-20 p-3 rounded-full">
+                                <i class="fas fa-shopping-cart text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+                                <div class="bg-white h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Revenue Card -->
+                    <div class="modern-stat-card bg-gradient-to-br from-green-500 to-emerald-600 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in" style="animation-delay: 0.1s">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-green-100 text-sm font-medium mb-1">Total Revenue</p>
+                                <p class="text-3xl font-bold text-white" id="total-revenue">$3,420</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="fas fa-arrow-up text-green-200 text-xs mr-1"></i>
+                                    <span class="text-green-200 text-xs">+8% from last month</span>
+                                </div>
+                            </div>
+                            <div class="bg-white bg-opacity-20 p-3 rounded-full">
+                                <i class="fas fa-dollar-sign text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+                                <div class="bg-white h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Users Card -->
+                    <div class="modern-stat-card bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in" style="animation-delay: 0.2s">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-purple-100 text-sm font-medium mb-1">Total Users</p>
+                                <p class="text-3xl font-bold text-white" id="total-users">89</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="fas fa-arrow-up text-purple-200 text-xs mr-1"></i>
+                                    <span class="text-purple-200 text-xs">+15% from last month</span>
+                                </div>
+                            </div>
+                            <div class="bg-white bg-opacity-20 p-3 rounded-full">
+                                <i class="fas fa-users text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+                                <div class="bg-white h-2 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Card -->
+                    <div class="modern-stat-card bg-gradient-to-br from-orange-500 to-red-500 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in" style="animation-delay: 0.3s">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-orange-100 text-sm font-medium mb-1">Products</p>
+                                <p class="text-3xl font-bold text-white" id="total-products">24</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="fas fa-arrow-up text-orange-200 text-xs mr-1"></i>
+                                    <span class="text-orange-200 text-xs">+3 new this month</span>
+                                </div>
+                            </div>
+                            <div class="bg-white bg-opacity-20 p-3 rounded-full">
+                                <i class="fas fa-coffee text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+                                <div class="bg-white h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Low Stock Alerts -->
+                <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center">
+                            <i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i>
+                            Low Stock Alerts
+                        </h3>
+                        <span id="low-stock-count" class="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-medium rounded-full">0 items</span>
+                    </div>
+                    <div id="low-stock-alerts" class="space-y-3">
+                        <!-- Low stock alerts will be loaded here -->
+                        <div class="text-center py-8 text-gray-500">
+                            <i class="fas fa-check-circle text-green-500 text-3xl mb-2"></i>
+                            <p>All products are well-stocked!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-lg font-semibold mb-4">Recent Orders</h3>
+                        <div id="recent-orders" class="space-y-3">
+                            <!-- Recent orders will be loaded here -->
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <h3 class="text-lg font-semibold mb-4">Recent Users</h3>
+                        <div id="recent-users" class="space-y-3">
+                            <!-- Recent users will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Management Section -->
+            <section id="users-section" class="admin-section hidden">
+                <div class="mb-8">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">User Management</h1>
+                            <p class="text-gray-600">Manage customer accounts and permissions</p>
+                        </div>
+                        <button onclick="showAddUserModal()" class="btn-coffee">
+                            <i class="fas fa-plus mr-2"></i>Add User
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg">
+                    <div class="p-6 border-b">
+                        <div class="flex justify-between items-center">
+                            <h3 class="text-lg font-semibold">All Users</h3>
+                            <div class="flex space-x-2">
+                                <div class="relative">
+                                    <input type="text" id="user-search" placeholder="Search users..."
+                                        class="form-input w-64 pr-8" onkeyup="filterUsers()">
+                                    <button onclick="resetUserFilters()"
+                                        class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                        title="Clear search">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <select id="role-filter" class="form-input" onchange="filterUsers()">
+                                    <option value="">All Roles</option>
+                                    <option value="customer">Customers</option>
+                                    <option value="admin">Admins</option>
+                                </select>
+                                <button onclick="loadUsers()"
+                                    class="px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded border text-gray-600"
+                                    title="Refresh users">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">User
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table" class="divide-y divide-gray-200">
+                                <!-- Users will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Products Management Section -->
+            <section id="products-section" class="admin-section hidden">
+                <div class="mb-8">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900 elegant-title">Product Management</h1>
+                            <p class="text-gray-600">Add, edit, and manage your menu items with style</p>
+                        </div>
+                        <button onclick="showAddProductModal()" class="btn-coffee shadow-lg">
+                            <i class="fas fa-plus mr-2"></i>Add New Product
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters and Search -->
+                <div class="bg-white rounded-xl shadow-lg mb-8">
+                    <div class="p-6">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <div class="flex items-center space-x-4">
+                                <h3 class="text-lg font-semibold text-gray-900">Filter Products</h3>
+                                <div class="flex space-x-2">
+                                    <button onclick="filterAdminProducts('all')" class="admin-filter-btn active">
+                                        All Items
+                                    </button>
+                                    <button onclick="filterAdminProducts('Coffee')" class="admin-filter-btn">
+                                        Coffee
+                                    </button>
+                                    <button onclick="filterAdminProducts('Pastry')" class="admin-filter-btn">
+                                        Pastry
+                                    </button>
+                                    <button onclick="filterAdminProducts('Cold Drinks')" class="admin-filter-btn">
+                                        Cold Drinks
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex space-x-3">
+                                <div class="relative">
+                                    <input type="text" id="productSearchInput" placeholder="Search products..."
+                                        class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown focus:border-coffee-brown w-64">
+                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                </div>
+                                <select id="productStatusFilter"
+                                    class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                                    <option value="all">All Status</option>
+                                    <option value="available">Available</option>
+                                    <option value="unavailable">Unavailable</option>
+                                    <option value="featured">Featured</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-6 rounded-xl text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-blue-100">Total Products</p>
+                                <p class="text-3xl font-bold" id="admin-total-products">0</p>
+                            </div>
+                            <i class="fas fa-coffee text-blue-200 text-3xl"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-green-500 to-green-600 p-6 rounded-xl text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-green-100">Available</p>
+                                <p class="text-3xl font-bold" id="admin-available-products">0</p>
+                            </div>
+                            <i class="fas fa-check-circle text-green-200 text-3xl"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-purple-500 to-purple-600 p-6 rounded-xl text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-purple-100">Featured</p>
+                                <p class="text-3xl font-bold" id="admin-featured-products">0</p>
+                            </div>
+                            <i class="fas fa-star text-purple-200 text-3xl"></i>
+                        </div>
+                    </div>
+                    <div class="bg-gradient-to-r from-orange-500 to-orange-600 p-6 rounded-xl text-white">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-orange-100">Categories</p>
+                                <p class="text-3xl font-bold" id="admin-total-categories">3</p>
+                            </div>
+                            <i class="fas fa-tags text-orange-200 text-3xl"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <div id="products-grid" class="product-grid">
+                        <!-- Products will be loaded here -->
+                    </div>
+
+                    <!-- Empty State -->
+                    <div id="products-empty-state" class="hidden text-center py-16">
+                        <i class="fas fa-coffee text-gray-300 text-6xl mb-4"></i>
+                        <h3 class="text-xl font-semibold text-gray-600 mb-2">No products found</h3>
+                        <p class="text-gray-500 mb-6">Start by adding your first product to the menu</p>
+                        <button onclick="showAddProductModal()" class="btn-coffee">
+                            <i class="fas fa-plus mr-2"></i>Add Your First Product
+                        </button>
+                    </div>
+                </div>
+            </section> <!-- Orders Management Section -->
+            <section id="orders-section" class="admin-section hidden">
+                <div class="mb-8">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Order Management</h1>
+                            <p class="text-gray-600">Track and manage customer orders</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <select class="form-input">
+                                <option>All Orders</option>
+                                <option>Pending</option>
+                                <option>Preparing</option>
+                                <option>Ready</option>
+                                <option>Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Items
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date
+                                    </th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table" class="divide-y divide-gray-200">
+                                <!-- Orders will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Other sections (testimonials, categories, contacts) would follow similar patterns -->
+            <section id="testimonials-section" class="admin-section hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Testimonials Management</h1>
+                        <p class="text-gray-600 mt-1">Manage customer testimonials and reviews</p>
+                    </div>
+                    <button onclick="openTestimonialModal()"
+                        class="bg-coffee-brown text-white px-6 py-2 rounded-lg hover:bg-coffee-dark transition duration-200 flex items-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add Testimonial
+                    </button>
+                </div>
+
+                <!-- Testimonials Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100 text-blue-600">
+                                <i class="fas fa-comments text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Total Testimonials</p>
+                                <p class="text-2xl font-bold text-gray-900" id="total-testimonials">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100 text-yellow-600">
+                                <i class="fas fa-star text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Average Rating</p>
+                                <p class="text-2xl font-bold text-gray-900" id="average-rating">0.0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100 text-green-600">
+                                <i class="fas fa-eye text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Published</p>
+                                <p class="text-2xl font-bold text-gray-900" id="published-testimonials">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-orange-100 text-orange-600">
+                                <i class="fas fa-clock text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-600">Pending</p>
+                                <p class="text-2xl font-bold text-gray-900" id="pending-testimonials">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonials Table -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="p-6 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-xl font-semibold text-gray-900">All Testimonials</h2>
+                            <div class="flex space-x-3">
+                                <select id="testimonial-status-filter" onchange="filterTestimonials()"
+                                    class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+                                    <option value="">All Status</option>
+                                    <option value="published">Published</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="hidden">Hidden</option>
+                                </select>
+                                <input type="text" id="testimonial-search" placeholder="Search testimonials..."
+                                    onkeyup="searchTestimonials()"
+                                    class="px-3 py-1 border border-gray-300 rounded-md text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Customer
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Rating
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Review
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Date
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="testimonials-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Testimonials will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="categories-section" class="admin-section hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Categories Management</h1>
+                        <p class="text-gray-600">Manage product categories and organize your menu</p>
+                    </div>
+                    <button onclick="openAddCategoryModal()"
+                        class="bg-coffee-brown text-white px-6 py-2 rounded-lg hover:bg-coffee-dark transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Add Category
+                    </button>
+                </div>
+
+                <!-- Categories Grid -->
+                <div class="mb-8">
+                    <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Categories will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Categories Table -->
+                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-semibold text-gray-900">All Categories</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Category
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Description
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Products Count
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status
+                                    </th>
+                                    <th
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="categories-table-body" class="bg-white divide-y divide-gray-200">
+                                <!-- Categories rows will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Product Ratings Section -->
+            <section id="ratings-section" class="admin-section hidden">
+                <div class="mb-6">
+                    <h1 class="text-3xl font-bold text-gray-900 mb-2">Product Ratings & Reviews</h1>
+                    <p class="text-gray-600">Manage customer ratings and reviews for your products</p>
+                </div>
+
+                <!-- Ratings Overview Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-yellow-100">
+                                <i class="fas fa-star text-yellow-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-700">Average Rating</h3>
+                                <p id="average-rating" class="text-2xl font-bold text-yellow-600">0.0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-blue-100">
+                                <i class="fas fa-comments text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-700">Total Reviews</h3>
+                                <p id="total-reviews" class="text-2xl font-bold text-blue-600">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-100">
+                                <i class="fas fa-thumbs-up text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-700">5-Star Reviews</h3>
+                                <p id="five-star-reviews" class="text-2xl font-bold text-green-600">0</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-red-100">
+                                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                            </div>
+                            <div class="ml-4">
+                                <h3 class="text-lg font-semibold text-gray-700">Low Ratings</h3>
+                                <p id="low-ratings" class="text-2xl font-bold text-red-600">0</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+                    <div class="flex flex-wrap gap-4 items-center">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Product</label>
+                            <select id="rating-product-filter" onchange="filterRatings()"
+                                class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                                <option value="">All Products</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Filter by Rating</label>
+                            <select id="rating-star-filter" onchange="filterRatings()"
+                                class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                                <option value="">All Ratings</option>
+                                <option value="5">5 Stars</option>
+                                <option value="4">4 Stars</option>
+                                <option value="3">3 Stars</option>
+                                <option value="2">2 Stars</option>
+                                <option value="1">1 Star</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Sort by</label>
+                            <select id="rating-sort-filter" onchange="filterRatings()"
+                                class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="highest">Highest Rating</option>
+                                <option value="lowest">Lowest Rating</option>
+                            </select>
+                        </div>
+                        <div class="ml-auto">
+                            <button onclick="exportRatings()" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                                <i class="fas fa-file-export mr-2 text-sm"></i>
+                                <span class="hidden sm:inline">Export Reviews</span>
+                                <span class="sm:hidden">Export</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ratings List -->
+                <div class="bg-white rounded-lg shadow-lg">
+                    <div class="p-6 border-b border-gray-200">
+                        <h2 class="text-xl font-semibold text-gray-900">Customer Reviews</h2>
+                    </div>
+                    <div id="ratings-list" class="p-6">
+                        <!-- Ratings will be loaded here -->
+                    </div>
+                </div>
+            </section>
+
+            <section id="contacts-section" class="admin-section hidden">
+                <div class="flex justify-between items-center mb-8">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900 elegant-title">Contact Messages</h1>
+                        <p class="text-gray-600 mt-1">Manage and respond to customer inquiries with modern tools</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button onclick="loadContacts()" class="btn-coffee shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
+                            <i class="fas fa-refresh mr-2"></i>Refresh
+                        </button>
+                        <button onclick="exportContacts()" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                            <i class="fas fa-file-export mr-2 text-sm"></i>
+                            <span class="hidden sm:inline">Export</span>
+                        </button>
+                        <button onclick="toggleContactView()" id="view-toggle-btn" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors flex items-center">
+                            <i class="fas fa-th mr-2"></i>
+                            <span>Grid View</span>
+                        </button>
+                        <button onclick="toggleFeaturedContacts()" id="featured-toggle-btn" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition-colors flex items-center shadow-lg hover:shadow-xl transform hover:scale-105">
+                            <i class="fas fa-star mr-2"></i>
+                            <span>Show Featured</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Enhanced Contact Statistics with Animations -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="modern-stat-card bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-blue-100 text-sm font-medium mb-1">Total Messages</p>
+                                <p class="text-3xl font-bold text-white" id="total-contacts">0</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="fas fa-arrow-up text-green-300 text-xs mr-1"></i>
+                                    <span class="text-blue-200 text-xs">+12% this week</span>
+                                </div>
+                            </div>
+                            <div class="bg-white bg-opacity-20 p-3 rounded-full">
+                                <i class="fas fa-envelope text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+                                <div class="bg-white h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modern-stat-card bg-gradient-to-br from-yellow-500 to-orange-500 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in" style="animation-delay: 0.1s">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-yellow-100 text-sm font-medium mb-1">New Messages</p>
+                                <p class="text-3xl font-bold text-white" id="new-contacts">0</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="fas fa-exclamation-triangle text-red-300 text-xs mr-1"></i>
+                                    <span class="text-yellow-200 text-xs">Requires attention</span>
+                                </div>
+                            </div>
+                            <div class="bg-white bg-opacity-20 p-3 rounded-full">
+                                <i class="fas fa-exclamation-circle text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+                                <div class="bg-white h-2 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modern-stat-card bg-gradient-to-br from-purple-500 to-purple-600 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in" style="animation-delay: 0.2s">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-purple-100 text-sm font-medium mb-1">In Progress</p>
+                                <p class="text-3xl font-bold text-white" id="progress-contacts">0</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="fas fa-clock text-purple-200 text-xs mr-1"></i>
+                                    <span class="text-purple-200 text-xs">Being handled</span>
+                                </div>
+                            </div>
+                            <div class="bg-white bg-opacity-20 p-3 rounded-full">
+                                <i class="fas fa-clock text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+                                <div class="bg-white h-2 rounded-full" style="width: 40%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modern-stat-card bg-gradient-to-br from-green-500 to-emerald-600 p-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in" style="animation-delay: 0.3s">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-green-100 text-sm font-medium mb-1">Resolved</p>
+                                <p class="text-3xl font-bold text-white" id="resolved-contacts">0</p>
+                                <div class="flex items-center mt-2">
+                                    <i class="fas fa-check-circle text-green-200 text-xs mr-1"></i>
+                                    <span class="text-green-200 text-xs">Successfully handled</span>
+                                </div>
+                            </div>
+                            <div class="bg-white bg-opacity-20 p-3 rounded-full">
+                                <i class="fas fa-check-circle text-white text-2xl"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <div class="w-full bg-white bg-opacity-20 rounded-full h-2">
+                                <div class="bg-white h-2 rounded-full" style="width: 90%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Filters and Search -->
+                <div class="bg-white rounded-xl shadow-lg mb-8">
+                    <div class="p-6">
+                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                            <div class="flex items-center space-x-4">
+                                <h3 class="text-lg font-semibold text-gray-900">Filter Messages</h3>
+                                <div class="flex space-x-2">
+                                    <button onclick="filterContactsByStatus('')" class="admin-filter-btn active">
+                                        All Messages
+                                    </button>
+                                    <button onclick="filterContactsByStatus('NEW')" class="admin-filter-btn">
+                                        New
+                                    </button>
+                                    <button onclick="filterContactsByStatus('IN_PROGRESS')" class="admin-filter-btn">
+                                        In Progress
+                                    </button>
+                                    <button onclick="filterContactsByStatus('RESOLVED')" class="admin-filter-btn">
+                                        Resolved
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex space-x-3">
+                                <div class="relative">
+                                    <input type="text" id="contact-search" placeholder="Search messages..."
+                                           onkeyup="debouncedSearchContacts()"
+                                           class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown focus:border-coffee-brown w-64">
+                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                </div>
+                                <select id="contact-date-filter" onchange="filterContactsByDate()" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                                    <option value="">All Time</option>
+                                    <option value="today">Today</option>
+                                    <option value="week">This Week</option>
+                                    <option value="month">This Month</option>
+                                    <option value="quarter">Last 3 Months</option>
+                                </select>
+                                <select id="contact-sort-filter" onchange="sortContacts()" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                                    <option value="newest">Newest First</option>
+                                    <option value="oldest">Oldest First</option>
+                                    <option value="priority">Priority</option>
+                                </select>
+                                <button onclick="clearFilters()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded border text-gray-600" title="Clear all filters">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- View Toggle and Bulk Actions -->
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600" id="contacts-count">0 messages</span>
+                        <div class="flex space-x-2">
+                            <button onclick="toggleContactView()" id="view-toggle-btn" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm">
+                                <i class="fas fa-th mr-2"></i><span>Grid View</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="bulk-actions-bar" class="hidden flex items-center space-x-3">
+                        <span id="selected-count" class="text-sm text-gray-600">0 messages selected</span>
+                        <button onclick="showBulkActions()" id="bulk-actions-btn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm">
+                            <i class="fas fa-tasks mr-2"></i>Bulk Actions
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Contact Messages Container -->
+                <div class="bg-gray-50 rounded-xl p-6">
+                    <!-- List View -->
+                    <div id="contacts-list-view" class="space-y-4">
+                        <!-- Contact messages will be loaded here -->
+                        <div class="text-center py-16">
+                            <i class="fas fa-spinner fa-spin text-4xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">Loading Messages</h3>
+                            <p class="text-gray-500">Please wait while we fetch your contact messages...</p>
+                        </div>
+                    </div>
+
+                    <!-- Grid View -->
+                    <div id="contacts-grid-view" class="hidden">
+                        <div id="contacts-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <!-- Grid view will be populated here -->
+                        </div>
+                        <div id="contacts-grid-empty" class="hidden text-center py-16">
+                            <i class="fas fa-envelope text-6xl text-gray-300 mb-4"></i>
+                            <h3 class="text-xl font-semibold text-gray-600 mb-2">No messages found</h3>
+                            <p class="text-gray-500">Try adjusting your filters or check back later for new messages.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Reply Modal -->
+            <div id="contactReplyModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+                <div class="flex items-center justify-center min-h-screen p-4">
+                    <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+                        <div class="flex justify-between items-center p-6 border-b">
+                            <h3 class="text-lg font-semibold">Reply to Contact</h3>
+                            <button onclick="closeContactReplyModal()" class="text-gray-400 hover:text-gray-600">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="p-6">
+                            <div id="contact-details" class="mb-6 p-4 bg-gray-50 rounded-lg">
+                                <!-- Contact details will be loaded here -->
+                            </div>
+                            <form id="reply-form">
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Admin Reply</label>
+                                    <textarea id="admin-reply" rows="6" class="w-full form-input"
+                                        placeholder="Type your reply here..." required></textarea>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Admin Notes
+                                        (Internal)</label>
+                                    <textarea id="admin-notes" rows="3" class="w-full form-input"
+                                        placeholder="Internal notes (not sent to customer)"></textarea>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                    <select id="contact-status" class="w-full form-input">
+                                        <option value="NEW">New</option>
+                                        <option value="IN_PROGRESS">In Progress</option>
+                                        <option value="RESOLVED">Resolved</option>
+                                        <option value="CLOSED">Closed</option>
+                                    </select>
+                                </div>
+                                <div class="flex justify-end space-x-3">
+                                    <button type="button" onclick="closeContactReplyModal()"
+                                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">Cancel</button>
+                                    <button type="submit" class="btn-coffee">Send Reply</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-md w-full">
+                <div class="flex justify-between items-center p-6 border-b">
+                    <h3 class="text-lg font-semibold">Add New User</h3>
+                    <button onclick="closeAddUserModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="addUserForm" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <input type="text" id="userFirstName" name="firstName" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <input type="text" id="userLastName" name="lastName" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="userEmail" name="email" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="userPassword" name="password" required minlength="6"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone (Optional)</label>
+                        <input type="tel" id="userPhone" name="phone"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                        <select id="userRole" name="role" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                            <option value="customer">Customer</option>
+                            <option value="administrator">Administrator</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input type="checkbox" id="userActive" name="isActive" checked
+                            class="mr-2 h-4 w-4 text-coffee-brown border-gray-300 rounded focus:ring-coffee-brown">
+                        <label for="userActive" class="text-sm text-gray-700">Active Account</label>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeAddUserModal()"
+                            class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-coffee-brown text-white rounded-lg hover:bg-coffee-dark">
+                            <i class="fas fa-user-plus mr-2"></i>Add User
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-md w-full">
+                <div class="flex justify-between items-center p-6 border-b">
+                    <h3 class="text-lg font-semibold">Edit User</h3>
+                    <button onclick="closeEditUserModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="editUserForm" class="p-6 space-y-4">
+                    <input type="hidden" id="editUserId" name="userId">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                        <input type="text" id="editUserFirstName" name="firstName" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                        <input type="text" id="editUserLastName" name="lastName" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="editUserEmail" name="email" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password (leave blank to keep
+                            current)</label>
+                        <input type="password" id="editUserPassword" name="password" minlength="6"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Phone (Optional)</label>
+                        <input type="tel" id="editUserPhone" name="phone"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                        <select id="editUserRole" name="role" required
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                            <option value="customer">Customer</option>
+                            <option value="administrator">Administrator</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input type="checkbox" id="editUserActive" name="isActive"
+                            class="mr-2 h-4 w-4 text-coffee-brown border-gray-300 rounded focus:ring-coffee-brown">
+                        <label for="editUserActive" class="text-sm text-gray-700">Active Account</label>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeEditUserModal()"
+                            class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            <i class="fas fa-save mr-2"></i>Update User
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="addProductModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-2xl w-full max-h-screen overflow-y-auto">
+                <div class="flex justify-between items-center p-6 border-b">
+                    <h3 class="text-lg font-semibold">Add New Product</h3>
+                    <button onclick="closeAddProductModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="addProductForm" class="p-6 space-y-4">
+                    <input type="hidden" id="productId" name="productId" value="">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                            <input type="text" id="productName" name="name" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Price ($)</label>
+                            <input type="number" id="productPrice" name="price" step="0.01" min="0" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea id="productDescription" name="description" rows="3"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown"></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                            <select id="productCategory" name="categoryId" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                                <option value="">Select Category</option>
+                                <option value="1">Coffee</option>
+                                <option value="2">Pastry</option>
+                                <option value="3">Cold Drinks</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
+                            <input type="number" id="productStock" name="stockQuantity" min="0" value="100"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                        <input type="url" id="productImageUrl" name="imageUrl"
+                            placeholder="https://example.com/image.jpg"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Prep Time (min)</label>
+                            <input type="number" id="productPrepTime" name="preparationTime" min="1" value="5"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Calories</label>
+                            <input type="number" id="productCalories" name="calories" min="0"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                        </div>
+
+                        <div class="flex items-center pt-6">
+                            <input type="checkbox" id="productAvailable" name="isAvailable" checked
+                                class="mr-2 h-4 w-4 text-coffee-brown border-gray-300 rounded focus:ring-coffee-brown">
+                            <label for="productAvailable" class="text-sm text-gray-700">Available</label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ingredients</label>
+                            <textarea id="productIngredients" name="ingredients" rows="2"
+                                placeholder="e.g., Espresso, Steamed milk, Vanilla syrup"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Allergens</label>
+                            <textarea id="productAllergens" name="allergens" rows="2"
+                                placeholder="e.g., Contains milk, May contain nuts"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input type="checkbox" id="productFeatured" name="isFeatured"
+                            class="mr-2 h-4 w-4 text-coffee-brown border-gray-300 rounded focus:ring-coffee-brown">
+                        <label for="productFeatured" class="text-sm text-gray-700">Featured Product</label>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeAddProductModal()"
+                            class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-coffee-brown text-white rounded-lg hover:bg-coffee-dark">
+                            <i class="fas fa-plus mr-2"></i>Save Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Category Modal -->
+    <div id="addCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-md w-full">
+                <div class="flex justify-between items-center p-6 border-b">
+                    <h3 class="text-lg font-semibold" id="category-modal-title">Add New Category</h3>
+                    <button onclick="closeCategoryModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="categoryForm" class="p-6 space-y-4">
+                    <input type="hidden" id="categoryId" name="categoryId">
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category Name</label>
+                        <input type="text" id="categoryName" name="name" required
+                            placeholder="e.g., Coffee, Pastry, Cold Drinks"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea id="categoryDescription" name="description" rows="3"
+                            placeholder="Brief description of this category"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category Icon</label>
+                        <select id="categoryIcon" name="icon"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                            <option value="fas fa-coffee">☕ Coffee</option>
+                            <option value="fas fa-cookie-bite">🍪 Pastry</option>
+                            <option value="fas fa-glass-whiskey">🥤 Cold Drinks</option>
+                            <option value="fas fa-bread-slice">🍞 Bakery</option>
+                            <option value="fas fa-ice-cream">🍦 Desserts</option>
+                            <option value="fas fa-leaf">🌿 Healthy</option>
+                            <option value="fas fa-utensils">🍽️ Meals</option>
+                            <option value="fas fa-birthday-cake">🎂 Cakes</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category Image URL *</label>
+                        <input type="url" id="categoryImageUrl" name="imageUrl" required
+                            placeholder="https://example.com/category-image.jpg"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-coffee-brown">
+                        <p class="text-xs text-gray-500 mt-1">Required: Add an image URL to represent this category</p>
+                    </div>
+
+                    <div class="flex items-center">
+                        <input type="checkbox" id="categoryActive" name="isActive" checked
+                            class="mr-2 h-4 w-4 text-coffee-brown border-gray-300 rounded focus:ring-coffee-brown">
+                        <label for="categoryActive" class="text-sm text-gray-700">Active Category</label>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeCategoryModal()"
+                            class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" id="category-submit-btn"
+                            class="px-4 py-2 bg-coffee-brown text-white rounded-lg hover:bg-coffee-dark">
+                            <i class="fas fa-plus mr-2"></i>Add Category
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+                <div class="flex justify-between items-center p-6 border-b">
+                    <h3 class="text-lg font-semibold text-gray-900">Confirm Logout</h3>
+                    <button onclick="closeLogoutModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-sign-out-alt text-3xl text-red-500"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h4 class="text-lg font-medium text-gray-900">Are you sure you want to logout?</h4>
+                            <p class="text-sm text-gray-600 mt-1">Any unsaved changes will be lost.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-3">
+                        <button onclick="closeLogoutModal()"
+                            class="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                            Cancel
+                        </button>
+                        <button onclick="confirmLogout()"
+                            class="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded-lg transition-colors">
+                            <i class="fas fa-sign-out-alt mr-2"></i>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Settings Modal -->
+    <div id="profileSettingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-screen overflow-y-auto animate-in">
+                <div class="bg-gradient-to-r from-coffee-brown to-coffee-dark text-white p-6 rounded-t-xl">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-cog text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">Profile Settings</h3>
+                                <p class="text-coffee-light text-sm">Manage your account information</p>
+                            </div>
+                        </div>
+                        <button onclick="closeProfileSettingsModal()" class="text-white hover:text-gray-200 transition-colors">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <form id="profileSettingsForm" class="p-8">
+                    <!-- Profile Header Section -->
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 mb-8">
+                        <div class="flex items-center space-x-6">
+                            <div class="relative">
+                                <div class="w-24 h-24 bg-gradient-to-br from-coffee-brown to-coffee-dark rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                                    A
+                                </div>
+                                <button type="button" class="absolute bottom-0 right-0 w-8 h-8 bg-coffee-brown text-white rounded-full flex items-center justify-center hover:bg-coffee-dark transition-colors shadow-lg">
+                                    <i class="fas fa-camera text-xs"></i>
+                                </button>
+                            </div>
+                            <div class="flex-1">
+                                <h4 class="text-2xl font-bold text-gray-900 mb-1">Admin User</h4>
+                                <p class="text-gray-600 mb-3">Administrator Account</p>
+                                <div class="flex items-center space-x-4">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                        <i class="fas fa-circle text-green-500 mr-2 text-xs"></i>
+                                        Active
+                                    </span>
+                                    <span class="text-sm text-gray-500">Last login: Today</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
+                        <div class="flex items-center mb-6">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-id-card text-blue-600"></i>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-900">Personal Information</h4>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">First Name</label>
+                                <input type="text" id="profileFirstName" value="Admin"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                                <input type="text" id="profileLastName" value="User"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">Email Address</label>
+                                <input type="email" id="profileEmail" value="admin@cafearoma.com"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                <input type="tel" id="profilePhone" value="+1 (555) 123-4567"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Information -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-6 mb-6 shadow-sm">
+                        <div class="flex items-center mb-6">
+                            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-info-circle text-purple-600"></i>
+                            </div>
+                            <h4 class="text-lg font-semibold text-gray-900">Additional Information</h4>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-gray-700">Bio</label>
+                            <textarea id="profileBio" rows="4" placeholder="Tell us about yourself and your role at Café Aroma..."
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all resize-none"></textarea>
+                            <p class="text-xs text-gray-500">This information is visible to other administrators</p>
+                        </div>
+                    </div>
+
+                    <!-- Security Section -->
+                    <div class="bg-white border border-gray-200 rounded-xl p-6 mb-8 shadow-sm">
+                        <div class="flex items-center justify-between mb-6">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                                    <i class="fas fa-shield-alt text-red-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-semibold text-gray-900">Security Settings</h4>
+                                    <p class="text-sm text-gray-600">Manage your account security</p>
+                                </div>
+                            </div>
+                            <button type="button" onclick="openChangePasswordModal()"
+                                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium">
+                                <i class="fas fa-key mr-2"></i>Change Password
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium text-gray-900">Two-Factor Authentication</p>
+                                        <p class="text-sm text-gray-600">Add an extra layer of security</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer">
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <p class="font-medium text-gray-900">Login Notifications</p>
+                                        <p class="text-sm text-gray-600">Get notified of new logins</p>
+                                    </div>
+                                    <label class="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" class="sr-only peer" checked>
+                                        <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+                        <button type="button" onclick="closeProfileSettingsModal()"
+                            class="px-6 py-3 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-6 py-3 bg-gradient-to-r from-coffee-brown to-coffee-dark text- rounded-lg hover:from-coffee-dark hover:to-coffee-brown transition-all font-medium shadow-lg hover:shadow-xl transform hover:scale-105">
+                            <i class="fas fa-save mr-2"></i>Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md animate-in">
+                <div class="bg-gradient-to-r from-red-500 to-pink-500 text-white p-6 rounded-t-xl">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-key text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold">Change Password</h3>
+                                <p class="text-red-100 text-sm">Update your account password</p>
+                            </div>
+                        </div>
+                        <button onclick="closeChangePasswordModal()" class="text-white hover:text-gray-200 transition-colors">
+                            <i class="fas fa-times text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <form id="changePasswordForm" onsubmit="changePassword(event)" class="p-6">
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">Current Password</label>
+                            <div class="relative">
+                                <input type="password" id="currentPassword" required
+                                    class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                                    placeholder="Enter current password">
+                                <i class="fas fa-lock absolute left-3 top-4 text-gray-400"></i>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">New Password</label>
+                            <div class="relative">
+                                <input type="password" id="newPassword" required minlength="8"
+                                    class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                                    placeholder="Enter new password">
+                                <i class="fas fa-key absolute left-3 top-4 text-gray-400"></i>
+                            </div>
+                            <div class="text-xs text-gray-500 mt-1">
+                                <div class="flex items-center space-x-1">
+                                    <i class="fas fa-info-circle"></i>
+                                    <span>Password must be at least 8 characters</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">Confirm New Password</label>
+                            <div class="relative">
+                                <input type="password" id="confirmPassword" required minlength="8"
+                                    class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
+                                    placeholder="Confirm new password">
+                                <i class="fas fa-check-circle absolute left-3 top-4 text-gray-400"></i>
+                            </div>
+                        </div>
+
+                        <!-- Password Strength Indicator -->
+                        <div class="space-y-2">
+                            <label class="block text-sm font-semibold text-gray-700">Password Strength</label>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div id="passwordStrength" class="bg-gray-300 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                            <div class="flex justify-between text-xs">
+                                <span id="strengthText" class="text-gray-500">Very Weak</span>
+                                <span id="strengthPercent" class="text-gray-500">0%</span>
+                            </div>
+                        </div>
+
+                        <!-- Password Requirements -->
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-2">Password Requirements:</h4>
+                            <div class="grid grid-cols-1 gap-1 text-xs">
+                                <div class="flex items-center space-x-2">
+                                    <i id="req-length" class="fas fa-times text-red-500"></i>
+                                    <span class="text-gray-600">At least 8 characters</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i id="req-uppercase" class="fas fa-times text-red-500"></i>
+                                    <span class="text-gray-600">One uppercase letter</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i id="req-lowercase" class="fas fa-times text-red-500"></i>
+                                    <span class="text-gray-600">One lowercase letter</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i id="req-number" class="fas fa-times text-red-500"></i>
+                                    <span class="text-gray-600">One number</span>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <i id="req-special" class="fas fa-times text-red-500"></i>
+                                    <span class="text-gray-600">One special character</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-4 pt-6 border-t border-gray-200 mt-6">
+                        <button type="button" onclick="closeChangePasswordModal()"
+                            class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-gradient-to-r from-red-500 to-pink-500 text-white rounded-lg hover:from-red-600 hover:to-pink-600 transition-all font-medium shadow-lg hover:shadow-xl transform hover:scale-105">
+                            <i class="fas fa-save mr-2"></i>Change Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Settings Modal -->
+    <div id="systemSettingsModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-6xl max-h-screen overflow-y-auto animate-in">
+                <div class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-6 rounded-t-xl">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-cogs text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold">System Settings</h3>
+                                <p class="text-purple-100 text-sm">Configure your café management system</p>
+                            </div>
+                        </div>
+                        <button onclick="closeSystemSettingsModal()" class="text-white hover:text-gray-200 transition-colors">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-8">
+                    <!-- System Overview Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-blue-600 text-sm font-medium">System Status</p>
+                                    <p class="text-2xl font-bold text-blue-900">Online</p>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-server text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-green-600 text-sm font-medium">Last Backup</p>
+                                    <p class="text-2xl font-bold text-green-900">2h ago</p>
+                                </div>
+                                <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-shield-alt text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl p-6">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-orange-600 text-sm font-medium">Active Users</p>
+                                    <p class="text-2xl font-bold text-orange-900">1</p>
+                                </div>
+                                <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- General Settings -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 bg-coffee-brown bg-opacity-10 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-building text-coffee-brown text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-bold text-gray-900">Business Settings</h4>
+                                    <p class="text-gray-600 text-sm">Configure your café's basic information</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-6">
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">Site Name</label>
+                                    <input type="text" id="siteName" value="Café Aroma"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all">
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">Site Description</label>
+                                    <textarea id="siteDescription" rows="3" placeholder="Brief description of your café..."
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all resize-none">Welcome to Café Aroma, where every cup tells a story.</textarea>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">Contact Email</label>
+                                    <input type="email" id="contactEmail" value="hello@cafearoma.com"
+                                        class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all">
+                                </div>
+
+                                <div class="space-y-2">
+                                    <label class="block text-sm font-semibold text-gray-700">Business Hours</label>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="block text-xs text-gray-600 mb-1">Opening</label>
+                                            <input type="time" id="businessStart" value="06:00"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs text-gray-600 mb-1">Closing</label>
+                                            <input type="time" id="businessEnd" value="22:00"
+                                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Settings -->
+                        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                            <div class="flex items-center mb-6">
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                                    <i class="fas fa-sliders-h text-purple-600 text-xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-xl font-bold text-gray-900">System Preferences</h4>
+                                    <p class="text-gray-600 text-sm">Advanced configuration options</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-6">
+                                <!-- Toggle Settings -->
+                                <div class="space-y-4">
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-tools text-gray-500 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium text-gray-900">Maintenance Mode</p>
+                                                <p class="text-sm text-gray-600">Put the site in maintenance mode</p>
+                                            </div>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="maintenanceMode" class="sr-only peer">
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                                        </label>
+                                    </div>
+
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-envelope text-gray-500 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium text-gray-900">Email Notifications</p>
+                                                <p class="text-sm text-gray-600">Receive email notifications for orders</p>
+                                            </div>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="emailNotifications" class="sr-only peer" checked>
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                        </label>
+                                    </div>
+
+                                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fas fa-save text-gray-500 mr-3"></i>
+                                            <div>
+                                                <p class="font-medium text-gray-900">Auto-save Forms</p>
+                                                <p class="text-sm text-gray-600">Automatically save form data</p>
+                                            </div>
+                                        </div>
+                                        <label class="relative inline-flex items-center cursor-pointer">
+                                            <input type="checkbox" id="autoSave" class="sr-only peer" checked>
+                                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Select Settings -->
+                                <div class="space-y-4">
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-semibold text-gray-700">Default Currency</label>
+                                        <select id="defaultCurrency"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all">
+                                            <option value="USD" selected>🇺🇸 USD ($)</option>
+                                            <option value="EUR">🇪🇺 EUR (€)</option>
+                                            <option value="GBP">🇬🇧 GBP (£)</option>
+                                            <option value="JPY">🇯🇵 JPY (¥)</option>
+                                            <option value="KHR">🇰🇭 KHR (៛)</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-semibold text-gray-700">Items Per Page</label>
+                                        <select id="itemsPerPage"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all">
+                                            <option value="10">10 items</option>
+                                            <option value="25" selected>25 items</option>
+                                            <option value="50">50 items</option>
+                                            <option value="100">100 items</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="space-y-2">
+                                        <label class="block text-sm font-semibold text-gray-700">Timezone</label>
+                                        <select id="timezone"
+                                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent transition-all">
+                                            <option value="UTC">🌍 UTC</option>
+                                            <option value="America/New_York">🇺🇸 Eastern Time</option>
+                                            <option value="America/Chicago">🇺🇸 Central Time</option>
+                                            <option value="America/Denver">🇺🇸 Mountain Time</option>
+                                            <option value="America/Los_Angeles">🇺🇸 Pacific Time</option>
+                                            <option value="Asia/Phnom Penh" selected>🇰🇭 Asia/Phnom Penh (ICT)</option>
+                                            <option value="Europe/London">🇬🇧 London</option>
+                                            <option value="Europe/Paris">🇫🇷 Paris</option>
+                                            <option value="Asia/Tokyo">🇯🇵 Tokyo</option>
+                                            <option value="Asia/Bangkok">🇹🇭 Bangkok</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Actions -->
+                    <div class="bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 rounded-xl p-6 mt-8">
+                        <h4 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+                            <i class="fas fa-wrench text-gray-600 mr-2"></i>
+                            System Actions
+                        </h4>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <button onclick="backupSystem()"
+                                class="flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                <i class="fas fa-download mr-2"></i>
+                                <span class="text-sm font-medium">Backup Data</span>
+                            </button>
+
+                            <button onclick="clearCache()"
+                                class="flex items-center justify-center px-4 py-3 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
+                                <i class="fas fa-broom mr-2"></i>
+                                <span class="text-sm font-medium">Clear Cache</span>
+                            </button>
+
+                            <button onclick="resetSystemSettings()"
+                                class="flex items-center justify-center px-4 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                                <i class="fas fa-undo mr-2"></i>
+                                <span class="text-sm font-medium">Reset All</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex justify-end space-x-4 pt-8 border-t border-gray-200 mt-8">
+                        <button type="button" onclick="closeSystemSettingsModal()"
+                            class="px-6 py-3 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </button>
+                        <button type="button" onclick="saveSystemSettings()"
+                            class="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition-all font-medium shadow-lg hover:shadow-xl transform hover:scale-105">
+                            <i class="fas fa-save mr-2"></i>Save Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Contact Confirmation Modal -->
+    <div id="deleteContactModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-md animate-in">
+                <div class="bg-gradient-to-r from-red-500 to-pink-500 text-white p-6 rounded-t-xl">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-trash-alt text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold">Delete Contact Message</h3>
+                            <p class="text-red-100 text-sm">This action cannot be undone</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <div class="flex items-start space-x-4 mb-6">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="text-lg font-semibold text-gray-900 mb-2">Are you sure?</h4>
+                            <p class="text-gray-600 mb-3">
+                                You are about to permanently delete the contact message from
+                                <span id="delete-contact-name" class="font-medium text-gray-900"></span>.
+                            </p>
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <div class="flex items-center">
+                                    <i class="fas fa-info-circle text-red-500 mr-2"></i>
+                                    <p class="text-sm text-red-700">
+                                        This will permanently remove the contact message and all associated data.
+                                        This action cannot be reversed.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-4">
+                        <button onclick="closeDeleteContactModal()"
+                            class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                            <i class="fas fa-times mr-2"></i>Cancel
+                        </button>
+                        <button onclick="confirmDeleteContact()"
+                            class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all font-medium shadow-lg hover:shadow-xl transform hover:scale-105">
+                            <i class="fas fa-trash-alt mr-2"></i>Delete Permanently
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Testimonial Modal -->
+    <div id="addTestimonialModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
+                <div class="flex justify-between items-center p-6 border-b">
+                    <h3 class="text-lg font-semibold" id="testimonial-modal-title">Add New Testimonial</h3>
+                    <button onclick="closeTestimonialModal()" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form id="testimonial-form" onsubmit="saveTestimonial(event)" class="p-6">
+                    <input type="hidden" id="testimonial-id">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="customer-name" class="block text-sm font-medium text-gray-700 mb-2">
+                                Customer Name *
+                            </label>
+                            <input type="text" id="customer-name" name="customerName" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent"
+                                placeholder="Enter customer name">
+                        </div>
+
+                        <div>
+                            <label for="customer-image" class="block text-sm font-medium text-gray-700 mb-2">
+                                Customer Photo URL
+                            </label>
+                            <input type="url" id="customer-image" name="customerImage"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent"
+                                placeholder="https://example.com/photo.jpg">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="testimonial-rating" class="block text-sm font-medium text-gray-700 mb-2">
+                            Rating *
+                        </label>
+                        <div class="flex items-center space-x-2">
+                            <div class="flex" id="rating-stars">
+                                <button type="button" onclick="setRating(1)"
+                                    class="text-2xl text-gray-300 hover:text-yellow-500 rating-star" data-rating="1">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                <button type="button" onclick="setRating(2)"
+                                    class="text-2xl text-gray-300 hover:text-yellow-500 rating-star" data-rating="2">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                <button type="button" onclick="setRating(3)"
+                                    class="text-2xl text-gray-300 hover:text-yellow-500 rating-star" data-rating="3">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                <button type="button" onclick="setRating(4)"
+                                    class="text-2xl text-gray-300 hover:text-yellow-500 rating-star" data-rating="4">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                                <button type="button" onclick="setRating(5)"
+                                    class="text-2xl text-gray-300 hover:text-yellow-500 rating-star" data-rating="5">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                            </div>
+                            <span id="rating-text" class="text-sm text-gray-600">Click to rate</span>
+                        </div>
+                        <input type="hidden" id="testimonial-rating-value" name="rating" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="testimonial-message" class="block text-sm font-medium text-gray-700 mb-2">
+                            Testimonial Message *
+                        </label>
+                        <textarea id="testimonial-message" name="message" required rows="4"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent"
+                            placeholder="Enter the customer's testimonial message..."></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="testimonial-status" class="block text-sm font-medium text-gray-700 mb-2">
+                                Status *
+                            </label>
+                            <select id="testimonial-status" name="status" required
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent">
+                                <option value="published">Published</option>
+                                <option value="pending">Pending Review</option>
+                                <option value="hidden">Hidden</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="testimonial-date" class="block text-sm font-medium text-gray-700 mb-2">
+                                Date
+                            </label>
+                            <input type="date" id="testimonial-date" name="date"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-coffee-brown focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" onclick="closeTestimonialModal()"
+                            class="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            Cancel
+                        </button>
+                        <button type="submit" id="testimonial-submit-btn"
+                            class="px-4 py-2 bg-coffee-brown text-white rounded-lg hover:bg-coffee-dark">
+                            <i class="fas fa-plus mr-2"></i>Add Testimonial
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- SweetAlert2 for modern alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/admin.js"></script>
+    <!-- your HTML content ... -->
+<!-- maybe your product table, buttons, etc -->
+
+
+</body>
+</html>
+
+</body>
+
+</html>
