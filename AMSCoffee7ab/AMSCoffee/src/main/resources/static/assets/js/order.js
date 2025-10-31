@@ -75,12 +75,58 @@ function updateOrderSummary() {
     const taxRate = 0.085; // 8.5%
     const tax = subtotal * taxRate;
     const deliveryFee = subtotal > 0 ? 2.99 : 0;
-    const total = subtotal + tax + deliveryFee;
-    
+
+    // Calculate discount if promo code is applied
+    let discount = 0;
+    let discountDisplay = '';
+    if (appliedPromoCode) {
+        if (typeof appliedPromoCode.discount === 'number' && appliedPromoCode.discount < 1) {
+            // Percentage discount
+            discount = subtotal * appliedPromoCode.discount;
+            discountDisplay = `-${formatCurrency(discount)} (${(appliedPromoCode.discount * 100).toFixed(0)}%)`;
+        } else {
+            // Fixed amount discount
+            discount = Math.min(appliedPromoCode.discount, subtotal); // Don't exceed subtotal
+            discountDisplay = `-${formatCurrency(discount)}`;
+        }
+    }
+
+    const total = subtotal + tax + deliveryFee - discount;
+
     document.getElementById('subtotal').textContent = formatCurrency(subtotal);
     document.getElementById('tax').textContent = formatCurrency(tax);
     document.getElementById('delivery-fee').textContent = formatCurrency(deliveryFee);
+
+    // Update total display
     document.getElementById('total').textContent = formatCurrency(total);
+
+    // Add discount row if promo is applied
+    const orderSummaryDiv = document.querySelector('.space-y-3');
+    const existingDiscountRow = document.getElementById('discount-row');
+
+    if (appliedPromoCode && discount > 0) {
+        if (!existingDiscountRow) {
+            const discountRow = document.createElement('div');
+            discountRow.id = 'discount-row';
+            discountRow.className = 'flex justify-between text-green-600';
+            discountRow.innerHTML = `
+                <span>Discount (${appliedPromoCode.description}):</span>
+                <span id="discount-amount">${discountDisplay}</span>
+            `;
+            // Insert before the border-t div within the orderSummaryDiv
+            const borderDiv = orderSummaryDiv.querySelector('.border-t');
+            if (borderDiv) {
+                orderSummaryDiv.insertBefore(discountRow, borderDiv);
+            } else {
+                // Fallback: append to the end if border-t not found
+                orderSummaryDiv.appendChild(discountRow);
+            }
+        } else {
+            document.getElementById('discount-amount').textContent = discountDisplay;
+        }
+    } else if (existingDiscountRow) {
+        existingDiscountRow.remove();
+    }
 }
 
 // Update checkout button state
@@ -107,28 +153,36 @@ function addQuickItem(productId) {
     }
 }
 
+// Global variable to store applied promo code
+let appliedPromoCode = null;
+
 // Apply promo code
 function applyPromoCode() {
     const promoInput = document.getElementById('promo-code');
     const promoMessage = document.getElementById('promo-message');
     const promoCode = promoInput.value.trim().toUpperCase();
-    
+
     const validPromoCodes = {
-        'WELCOME10': { discount: 0.10, description: '10% off your order' },
-        'COFFEE5': { discount: 5, description: '$5 off your order' },
-        'STUDENT': { discount: 0.15, description: '15% student discount' },
-        'BEK SONGSA' : { discount: 0.20, description: '20% off for Bek Songsa fans' }
+        'WELCOME10': { discount: 0.10, description: '10% off your order', code: 'WELCOME10' },
+        'COFFEE5': { discount: 5, description: '$5 off your order', code: 'COFFEE5' },
+        'STUDENT': { discount: 0.15, description: '15% student discount', code: 'STUDENT' },
+        'BEK SONGSA' : { discount: 0.20, description: '20% off for Bek Songsa fans', code: 'BEK SONGSA' }
     };
-    
+
     if (validPromoCodes[promoCode]) {
         const promo = validPromoCodes[promoCode];
         promoMessage.innerHTML = `<span class="text-green-600"><i class="fas fa-check mr-1"></i>${promo.description} applied!</span>`;
-        // Apply discount logic here
+        appliedPromoCode = promo; // Store the applied promo
+        updateOrderSummary(); // Recalculate totals with discount
         showToast('Promo code applied successfully!', 'success');
     } else if (promoCode) {
         promoMessage.innerHTML = `<span class="text-red-600"><i class="fas fa-times mr-1"></i>Invalid promo code</span>`;
+        appliedPromoCode = null; // Clear any applied promo
+        updateOrderSummary(); // Recalculate without discount
     } else {
         promoMessage.innerHTML = '';
+        appliedPromoCode = null; // Clear any applied promo
+        updateOrderSummary(); // Recalculate without discount
     }
 }
 
@@ -301,20 +355,35 @@ function populateUserInfo() {
 // Process order
 async function processOrder(formData) {
     showLoading();
-    
+
     try {
         const cartData = cart.get();
         const subtotal = cart.getTotal();
         const taxAmount = subtotal * 0.085;
         const deliveryFee = formData.orderType === 'delivery' ? 2.99 : 0;
-        const totalAmount = subtotal + taxAmount + deliveryFee;
-        
+
+        // Calculate discount if promo code is applied
+        let discount = 0;
+        if (appliedPromoCode) {
+            if (typeof appliedPromoCode.discount === 'number' && appliedPromoCode.discount < 1) {
+                // Percentage discount
+                discount = subtotal * appliedPromoCode.discount;
+            } else {
+                // Fixed amount discount
+                discount = Math.min(appliedPromoCode.discount, subtotal); // Don't exceed subtotal
+            }
+        }
+
+        const totalAmount = subtotal + taxAmount + deliveryFee - discount;
+
         const orderData = {
             ...formData,
             items: cartData,
             subtotal: subtotal,
             tax: taxAmount,
             deliveryFee: deliveryFee,
+            discount: discount,
+            promoCode: appliedPromoCode ? appliedPromoCode.code : null,
             total: totalAmount,
             orderDate: new Date().toISOString()
         };
@@ -355,14 +424,29 @@ async function processOrder(formData) {
             const subtotal = cart.getTotal();
             const taxAmount = subtotal * 0.085;
             const deliveryFee = formData.orderType === 'delivery' ? 2.99 : 0;
-            const totalAmount = subtotal + taxAmount + deliveryFee;
-            
+
+            // Calculate discount if promo code is applied
+            let discount = 0;
+            if (appliedPromoCode) {
+                if (typeof appliedPromoCode.discount === 'number' && appliedPromoCode.discount < 1) {
+                    // Percentage discount
+                    discount = subtotal * appliedPromoCode.discount;
+                } else {
+                    // Fixed amount discount
+                    discount = Math.min(appliedPromoCode.discount, subtotal); // Don't exceed subtotal
+                }
+            }
+
+            const totalAmount = subtotal + taxAmount + deliveryFee - discount;
+
             const localOrderData = {
                 ...formData,
                 items: cartData,
                 subtotal: subtotal,
                 tax: taxAmount,
                 deliveryFee: deliveryFee,
+                discount: discount,
+                promoCode: appliedPromoCode ? appliedPromoCode.code : null,
                 total: totalAmount,
                 orderNumber: 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase(),
                 orderDate: new Date().toISOString()

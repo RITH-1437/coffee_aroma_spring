@@ -66,4 +66,46 @@ public class ProductService {
         }
         return repository.findAllById(ids);
     }
+
+    /**
+     * Decrease stock quantity for a product
+     * @param productId the product ID
+     * @param quantity the quantity to decrease
+     * @return true if stock was successfully decreased, false if insufficient stock
+     */
+    public boolean decreaseStock(Long productId, Integer quantity) {
+        Optional<ProductModel> productOpt = repository.findById(productId);
+        if (productOpt.isEmpty()) {
+            return false;
+        }
+
+        ProductModel product = productOpt.get();
+        Integer currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
+
+        if (currentStock < quantity) {
+            return false; // Insufficient stock
+        }
+
+        product.setStockQuantity(currentStock - quantity);
+        product.setUpdatedAt(java.time.LocalDateTime.now());
+        repository.save(product);
+        return true;
+    }
+
+    /**
+     * Check if product has sufficient stock
+     * @param productId the product ID
+     * @param quantity the required quantity
+     * @return true if sufficient stock available
+     */
+    public boolean hasSufficientStock(Long productId, Integer quantity) {
+        Optional<ProductModel> productOpt = repository.findById(productId);
+        if (productOpt.isEmpty()) {
+            return false;
+        }
+
+        ProductModel product = productOpt.get();
+        Integer currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
+        return currentStock >= quantity;
+    }
 }

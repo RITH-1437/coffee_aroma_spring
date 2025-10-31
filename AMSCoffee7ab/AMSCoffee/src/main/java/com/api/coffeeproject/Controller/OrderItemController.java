@@ -2,6 +2,8 @@ package com.api.coffeeproject.Controller;
 
 import com.api.coffeeproject.Model.OrderItemModel;
 import com.api.coffeeproject.Repository.OrderItemRepository;
+import com.api.coffeeproject.Service.ProductService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,9 +14,11 @@ import java.util.Optional;
 public class OrderItemController {
 
     private final OrderItemRepository orderItems;
+    private final ProductService productService;
 
-    public OrderItemController(OrderItemRepository orderItems) {
+    public OrderItemController(OrderItemRepository orderItems, ProductService productService) {
         this.orderItems = orderItems;
+        this.productService = productService;
     }
 
     // ✅ GET all order items
@@ -38,9 +42,19 @@ public class OrderItemController {
 
     // ✅ CREATE new order item
     @PostMapping
-    public String createOrderItem(@RequestBody OrderItemModel orderItem) {
+    public ResponseEntity<String> createOrderItem(@RequestBody OrderItemModel orderItem) {
+        // Validate stock availability before creating order item
+        if (!productService.hasSufficientStock(orderItem.getProductId(), orderItem.getQuantity())) {
+            return ResponseEntity.badRequest().body("Insufficient stock for product ID: " + orderItem.getProductId());
+        }
+
+        // Decrease stock quantity
+        if (!productService.decreaseStock(orderItem.getProductId(), orderItem.getQuantity())) {
+            return ResponseEntity.badRequest().body("Failed to update stock for product ID: " + orderItem.getProductId());
+        }
+
         orderItems.save(orderItem);
-        return "Inserted Order Item Successfully!";
+        return ResponseEntity.ok("Inserted Order Item Successfully!");
     }
 
     // ✅ UPDATE existing order item
